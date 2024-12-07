@@ -1,0 +1,61 @@
+:root {
+    --primary-text-color: rgb(255, 255, 255, 30%);
+    --secondary-text-color: rgb(255, 255, 255, 48%);
+    --tertiary-text-color: rgb(255, 255, 255, 72%);
+    --tertiary-2-text-color: rgb(255, 255, 255, 0%);
+}
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto Mono", serif;
+    text-transform: uppercase;
+    background-color: #000000;
+    color: #ffffff;
+}
+#main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    width: 50vw;
+    padding-top: 6em;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 80px;
+}
+#page-title {
+    font-size: 1.2em;
+    font-weight: 300;
+    color: var(--primary-text-color);
+}
+.topic-item {
+    display: block;
+    font-size: 0.9em;
+    font-weight: 300;
+    position: relative;
+    cursor: pointer;
+    margin: 16px 0;
+    color: var(--secondary-text-color);
+    text-decoration: none;
+}
+.topic-item:hover {
+    color: var(--tertiary-2-text-color);;
+}
+.topic-item:hover .tooltip {
+    display: block;
+}
+.tooltip {
+    position: absolute;
+    color: var(--tertiary-text-color);
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    visibility: hidden;
+}
+.topic-item:hover .tooltip,
+.tooltip:hover {
+    opacity: 1;
+    visibility: visible;
+}
