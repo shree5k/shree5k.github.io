@@ -1,7 +1,7 @@
 :root {
-    --primary-text-color: rgb(255, 255, 255, 30%);
-    --secondary-text-color: rgb(255, 255, 255, 48%);
-    --tertiary-text-color: rgb(255, 255, 255, 72%);
+    --primary-text-color: #DBE6D6;
+    --secondary-text-color: rgb(255, 255, 255, 64%);
+    --tertiary-text-color: #DBE6D6;
     --tertiary-2-text-color: rgb(255, 255, 255, 0%);
 }
 body {
@@ -25,6 +25,7 @@ body {
 #page-title {
     font-size: 1.2em;
     font-weight: 300;
+    font-style: italic;
     color: var(--primary-text-color);
 }
 .topic-item {
