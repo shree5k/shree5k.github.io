@@ -4,12 +4,18 @@
     --tertiary-text-color: #DBE6D6;
     --tertiary-2-text-color: rgb(255, 255, 255, 0%);
 }
+@font-face {
+    font-family: 'PPE-thin';
+    src: url('/assets/RobotoMono-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 body {
     margin: 0;
     padding: 0;
     font-family: "Roboto Mono", serif;
     text-transform: uppercase;
-    background-color: #000000;
+    background-color: #0D0D0D;
     color: #ffffff;
 }
 #main-container {
@@ -23,9 +29,11 @@ body {
     gap: 80px;
 }
 #page-title {
+    font-family: 'PPE-thin', serif;
     font-size: 1.2em;
     font-weight: 300;
     font-style: italic;
+    text-transform: none;
     color: var(--primary-text-color);
 }
 .topic-item {
