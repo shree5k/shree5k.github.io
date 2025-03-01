@@ -159,6 +159,38 @@ p {
     margin-top: calc(var(--space-md) * -1);
 }
 
+/* Component: Gallery */
+.gallery-container {
+    width: 100%;
+}
+
+.gallery-grid {
+    column-count: 2;
+    column-gap: var(--space-md);
+    width: 100%;
+}
+
+.gallery-item {
+    position: relative;
+    width: 100%;
+    display: inline-block;
+    margin-bottom: var(--space-md);
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform var(--transition-base);
+    vertical-align: bottom;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
 /* Responsive Breakpoints */
 @media screen and (max-width: 768px) {
     #main-container {
@@ -200,6 +232,10 @@ p {
 
     #display-toggle {
         margin-top: var(--space-sm);
+    }
+
+    .gallery-grid {
+        column-count: 1;
     }
 }
 

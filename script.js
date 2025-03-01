@@ -51,4 +51,25 @@ async function fetchRepositoryTopics() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', fetchRepositoryTopics);
+function populateGallery() {
+    const galleryGrid = document.querySelector('.gallery-grid');
+    const imageCount = 9;
+
+    for (let i = 1; i <= imageCount; i++) {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        
+        const img = document.createElement('img');
+        img.src = `assets/work/${i}.png`;
+        img.alt = `Work sample ${i}`;
+        img.loading = 'lazy';
+        
+        galleryItem.appendChild(img);
+        galleryGrid.appendChild(galleryItem);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchRepositoryTopics();
+    populateGallery();
+});
