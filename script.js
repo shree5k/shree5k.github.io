@@ -1,5 +1,8 @@
+let showTagIds = false; // Global state to track display mode
+
 async function fetchRepositoryTopics() {
     const topicsContainer = document.getElementById('projects-container');
+    const toggleIcon = document.getElementById('display-toggle');
 
     try {
         const reposResponse = await fetch('data.json'); // Load data from JSON file
@@ -14,22 +17,32 @@ async function fetchRepositoryTopics() {
             return; // Exit if no repositories
         }
 
-        topicsContainer.innerHTML = ''; // Clear previous content
-        repos.forEach(repo => {
-            // Create anchor element
-            const topicLink = document.createElement('a');
-            topicLink.href = repo.link; // Set the URL for the repository (changed from repo.url to repo.link)
-            topicLink.target = '_blank'; // Open link in new tab
-            topicLink.className = 'topic-item'; // Add class for styling
-            topicLink.textContent = repo.tag_id; // Display tag_id
+        function updateDisplay() {
+            topicsContainer.innerHTML = ''; // Clear previous content
+            repos.forEach(repo => {
+                // Create anchor element
+                const topicLink = document.createElement('a');
+                topicLink.href = repo.link; // Set the URL for the repository (changed from repo.url to repo.link)
+                topicLink.target = '_blank'; // Open link in new tab
+                topicLink.className = 'topic-item'; // Add class for styling
+                
+                // Display either tag_id or name based on toggle state
+                topicLink.textContent = showTagIds ? repo.tag_id : repo.name;
 
-            // Create tooltip element
-            const tooltipElement = document.createElement('span');
-            tooltipElement.className = 'tooltip';
-            tooltipElement.textContent = repo.name; // Show name in tooltip
+                topicsContainer.appendChild(topicLink); // Append link to container
+            });
 
-            topicLink.appendChild(tooltipElement); // Append tooltip to link
-            topicsContainer.appendChild(topicLink); // Append link to container
+            // Update icon based on state
+            toggleIcon.src = showTagIds ? 'assets/icons/eye-closed.svg' : 'assets/icons/eye.svg';
+        }
+
+        // Initial display
+        updateDisplay();
+
+        // Set up toggle button functionality
+        toggleIcon.addEventListener('click', () => {
+            showTagIds = !showTagIds;
+            updateDisplay();
         });
 
     } catch (error) {
