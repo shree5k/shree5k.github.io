@@ -142,7 +142,7 @@ p {
 .topic-item {
     display: block;
     font-size: var(--font-size-sm);
-    font-weight: 200;
+    font-weight: 300;
     letter-spacing: 0.3px;
     margin: var(--space-lg) 0;
     color: var(--color-text-tertiary);
