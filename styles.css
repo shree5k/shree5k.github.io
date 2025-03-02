@@ -3,7 +3,7 @@
     --color-bg: #0D0D0D;
     --color-text-primary: #DBE6D6;
     --color-text-secondary: rgba(255, 255, 255, 0.6);
-    --color-text-tertiary: rgba(255, 255, 255, 0.48);
+    --color-text-tertiary: rgba(255, 255, 255, 0.50);
     
     /* Typography */
     --font-primary: "Roboto Mono", serif;
@@ -142,8 +142,8 @@ p {
 .topic-item {
     display: block;
     font-size: var(--font-size-sm);
-    font-weight: 300;
-    letter-spacing: 0.2px;
+    font-weight: 200;
+    letter-spacing: 0.3px;
     margin: var(--space-lg) 0;
     color: var(--color-text-tertiary);
     text-decoration: none;
