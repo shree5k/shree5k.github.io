@@ -197,6 +197,23 @@ p {
         gap: var(--space-3xl);
         padding-top: 4em;
     }
+
+    #page-title-1 {
+        font-size: 1.4em;
+    }
+
+    #page-title-2 {
+        font-size: 1.1em;
+    }
+
+    .subtitle {
+        font-size: 1.1em;
+    }
+
+    .topic-item {
+        font-size: 0.8em;
+        margin: var(--space-md) 0;
+    }
 }
 
 @media screen and (max-width: 480px) {
@@ -223,7 +240,7 @@ p {
     .tools {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--space-md);
+        gap: var(--space-xs);
     }
 
     .tools #page-title-2 {
@@ -231,11 +248,12 @@ p {
     }
 
     #display-toggle {
-        margin-top: var(--space-sm);
+        display: none;
     }
 
     .gallery-grid {
         column-count: 1;
+        padding-top: 12px;
     }
 }
 
