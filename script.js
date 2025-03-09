@@ -1,45 +1,60 @@
-let showTagIds = false; // Global state to track display mode
+let showTagIds = false;
+let hoverBackground = null;
+let projectsContainer = null;
+let projectItems = null;
 
 async function fetchRepositoryTopics() {
-    const topicsContainer = document.getElementById('projects-container');
+    projectsContainer = document.getElementById('projects-container');
     const toggleIcon = document.getElementById('display-toggle');
 
+    function moveBackground(item) {
+        const { offsetTop, offsetHeight, offsetWidth, offsetLeft } = item;
+        hoverBackground.style.top = offsetTop + 'px';
+        hoverBackground.style.left = offsetLeft + -8 + 'px';
+        hoverBackground.style.width = offsetWidth + 'px';
+        hoverBackground.style.height = offsetHeight + 'px';
+        hoverBackground.style.opacity = '1';
+        hoverBackground.style.zIndex = '-1';
+    }
+
+    function hideBackground() {
+        hoverBackground.style.opacity = '0';
+    }
+
     try {
-        const reposResponse = await fetch('data.json'); // Load data from JSON file
+        const reposResponse = await fetch('data.json');
 
         if (!reposResponse.ok) throw new Error('Failed to load repository data.');
 
         const repos = await reposResponse.json();
 
-        // Check if repos is empty
         if (!repos || repos.length === 0) {
-            topicsContainer.innerHTML = '<div class="error-message">No repositories found.</div>';
-            return; // Exit if no repositories
+            projectsContainer.innerHTML = '<div class="error-message">No repositories found.</div>';
+            return;
         }
 
         function updateDisplay() {
-            topicsContainer.innerHTML = ''; // Clear previous content
-            repos.forEach(repo => {
-                // Create anchor element
-                const topicLink = document.createElement('a');
-                topicLink.href = repo.link; // Set the URL for the repository (changed from repo.url to repo.link)
-                topicLink.target = '_blank'; // Open link in new tab
-                topicLink.className = 'topic-item'; // Add class for styling
-                
-                // Display either tag_id or name based on toggle state
-                topicLink.textContent = showTagIds ? repo.tag_id : repo.name;
+            projectsContainer.innerHTML = '';
 
-                topicsContainer.appendChild(topicLink); // Append link to container
+            repos.forEach(repo => {
+                const topicLink = document.createElement('a');
+                topicLink.href = repo.link;
+                topicLink.target = '_blank';
+                topicLink.className = 'topic-item';
+                topicLink.textContent = showTagIds ? repo.tag_id : repo.name;
+                topicLink.addEventListener('mouseenter', () => moveBackground(topicLink));
+                topicLink.addEventListener('mouseleave', () => hideBackground());
+
+                projectsContainer.appendChild(topicLink);
             });
 
-            // Update icon based on state
             toggleIcon.src = showTagIds ? 'assets/icons/eye-closed.svg' : 'assets/icons/eye.svg';
+
+            setupHoverEffect();
         }
 
-        // Initial display
         updateDisplay();
 
-        // Set up toggle button functionality
         toggleIcon.addEventListener('click', () => {
             showTagIds = !showTagIds;
             updateDisplay();
@@ -47,8 +62,23 @@ async function fetchRepositoryTopics() {
 
     } catch (error) {
         console.error('Error fetching repositories:', error);
-        topicsContainer.innerHTML = `<div class="error-message">${error.message}</div>`;
+        projectsContainer.innerHTML = `<div class="error-message">${error.message}</div>`;
     }
+}
+
+function setupHoverEffect() {
+    projectItems = document.querySelectorAll('.topic-item');
+
+    if (!hoverBackground) {
+        hoverBackground = document.createElement('div');
+        hoverBackground.className = 'projects-hover-bg';
+        projectsContainer.appendChild(hoverBackground);
+    }
+
+    projectItems.forEach(item => {
+        item.addEventListener('mouseenter', () => moveBackground(item));
+        item.addEventListener('mouseleave', () => hideBackground());
+    });
 }
 
 function populateGallery() {
