@@ -9,10 +9,12 @@
     /* Typography */
     --font-primary: "Inter", serif;
     --font-size-sm: 0.875rem;
-    --font-size-base: clamp(0.9em, 3vw, 1.2em);
+    --font-size-md: 1.15rem;
+    --font-size-base: clamp(0.8em, 2.5vw, 1.1em);
     --font-size-lg: clamp(1.2em, 4vw, 1.4em);
     
     /* Spacing */
+    --space-xxs: 0px;
     --space-xs: 4px;
     --space-sm: 8px;
     --space-md: 12px;
@@ -20,7 +22,6 @@
     --space-xl: 24px;
     --space-2xl: 48px;
     --space-3xl: 64px;
-    --space-4xl: 88px;
     
     /* Layout */
     --container-width: min(90%, 800px);
@@ -49,7 +50,7 @@ p {
     width: var(--container-width);
     padding: 6em 0 2em;
     margin: 0 auto;
-    gap: var(--space-4xl);
+    gap: var(--space-3xl);
 }
 
 .text-fade {
@@ -83,8 +84,8 @@ p {
     font-family: 'PPE-thin', serif;
     font-style: italic;
     text-transform: none;
-    font-size: var(--font-size-base);
-    opacity: 0.4;
+    font-size: var(--font-size-md);
+    opacity: 0.34;
 }
 
 .subtitle-container {
@@ -278,11 +279,13 @@ p {
 
 .end-section span {
     color: var(--color-text-tertiary);
-    font-family: 'PPE-thin', serif;
-    font-style: italic;
+    font-family: 'Inter', serif;
     text-transform: none;
-    font-size: var(--font-size-sm);
     padding-top: 20px;
+    font-size: .75rem;
+    line-height: 1rem;
+    font-weight: 400;
+    letter-spacing: -.00563rem;
 }
 
 /* Responsive Breakpoints */
