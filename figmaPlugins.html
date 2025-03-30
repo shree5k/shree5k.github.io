@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreeram K</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/blurPageLoader.css">
+    <link rel="stylesheet" href="css/figmaPlugins.css">
+    <link rel="preload" href="/module-scripts/hoverEffect.js" as="script" crossorigin>
+    <link rel="preload" href="/module-scripts/externalLinks.js" as="script" crossorigin>
+    <script src="script.js" type="module" defer></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LHV4PC8ED5"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LHV4PC8ED5');
+    </script>
+</head>
+<body>
+    <div id="main-container">
+        <aside class="home-link-aside">
+            <a href="index.html" class="topic-item home-link" style="font-style: italic;">
+                Home
+            </a>
+        </aside>
+        <div class="section-container">
+            <div class="intro-content" style="padding-bottom: 2rem;">
+                <h1 id="section-title">Figma Plugins</h1>
+                <div class="subtitle-container">
+                    <p class="subtitle">Crafting tools for better workflows</p>
+                </div>
+            </div>
+            <div id="plugins-container" class="hover-effect-container">
+                <div class="hover-bg"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/module-scripts/figmaPlugins.js" type="module" defer></script>
+</body>
+</html>

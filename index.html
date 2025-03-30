@@ -6,9 +6,12 @@
     <title>Shreeram K</title>
     <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="apple-touch-icon" href="assets/logo.png">
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
-    <!-- Google tag (gtag.js) -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/blurPageLoader.css">
+    <link rel="preload" href="/module-scripts/externalLinks.js" as="script" crossorigin>
+    <link rel="preload" href="/module-scripts/hoverEffect.js" as="script" crossorigin>
+    <script src="script.js" type="module" defer></script>
+    </script>    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LHV4PC8ED5"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
@@ -19,29 +22,14 @@
 </head>
 <body>
     <div id="main-container">
-        <div class="intro-container">
-            <div class="intro-header">
-                <img src="assets/logo.png" alt="shreeram logo" class="intro-logo">
-                <div class="intro-content">
-                    <h1 id="section-title">Shreeram K</h1>
-                    <div class="subtitle-container">
-                        <p class="subtitle">runnin' wild on figma canvas <span class="outdoor-text">
-                            <span class="forest-container">
-                                <!-- beautiful svgs from Sam -->
-                                <img src="assets/outdoors/flowers-1.svg" alt="Flowers" class="forest-svg">
-                                <img src="assets/outdoors/flowers-2.svg" alt="Flowers" class="forest-svg">                                
-                                <img src="assets/outdoors/flowers-3.svg" alt="Flowers" class="forest-svg">
-                                <img src="assets/outdoors/trees-1.svg" alt="Trees" class="forest-svg">
-                                <img src="assets/outdoors/trees-2.svg" alt="Trees" class="forest-svg">
-                                <!-- <img src="assets/outdoors/grass-1.svg" alt="Trees" class="forest-svg"> -->
-                            </span>
-                            (sometimes outdoors)
-                        </span></p>
-                    </div>
-                </div>
+        <div id="intro-placeholder"></div>
+        <div class="section-container" style="padding-top: 1rem;">
+            <div class="section-title-wrapper">
+                <h1 id="section-title">Work</h1>
+                <span class="subtitle">(design at JioHotstar)</span>
             </div>
         </div>
-        <div class="section-container" style="padding-top: 1rem;">
+        <div class="section-container">
             <div class="section-title-wrapper">
                 <h1 id="section-title">Built Out of Curiosity</h1>
                 <span class="subtitle">(and some coffee)</span>

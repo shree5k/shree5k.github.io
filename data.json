@@ -1,22 +1,65 @@
-[
-    {
-        "name": "Designer Excuses - Raycast",
-        "link": "https://www.raycast.com/shreeram/designer-excuses",
-        "tag_id": "240228"
-    },
-    {
-        "name": "Soul Reusability Score",
-        "link": "https://github.com/shree5k/soul-reusability-score",
-        "tag_id": "241201"
-    },
-    {
-        "name": "Soul Component Styler",
-        "link": "https://github.com/shree5k/soul-component-styler",
-        "tag_id": "241203"
-    },
-    {
-        "name": "Kannada Archives",
-        "link": "https://shree5k.github.io/kannada-archives",
-        "tag_id": "241207"
-    }
-]
+{
+    "projects": [
+        {
+            "name": "Figma Plugins",
+            "description": "Crafting tools for better workflows",
+            "link": "figmaPlugins.html",
+            "tag_id": "000001",
+            "openInNewTab": false,
+            "images": ["assets/plugins/Soul Tokens Mapper.png", "assets/plugins/Soul Reusability Score.png"]
+        },
+        {
+            "name": "Designer Excuses - Raycast",
+            "description": "Extension that generates witty and playful excuses",
+            "link": "https://www.raycast.com/shreeram/designer-excuses",
+            "tag_id": "240228",
+            "openInNewTab": true,
+            "images": ["assets/plugins/Raycast-1.png"]
+        },
+        {
+            "name": "Kannada Archives",
+            "description": "All things kannada in a digital capsule",
+            "link": "https://shree5k.github.io/kannada-archives",
+            "tag_id": "241207",
+            "openInNewTab": true,
+            "images": ["assets/plugins/kannada.png"]
+        }
+    ],
+    "plugins": [
+        {
+            "name": "Soul Tokens Mapper",
+            "description": "Maps matched design tokens",
+            "link": "https://github.com/shree5k",
+            "image": "assets/plugins/Soul Tokens Mapper.png"
+        },
+        {
+            "name": "Soul Reusability Score",
+            "description": "Calculates design component reusability with precision",
+            "link": "https://github.com/shree5k/soul-reusability-score",
+            "image": "assets/plugins/Soul Reusability Score.png"
+        },
+        {
+            "name": "Soul Component Styler",
+            "description": "Styles component sets with consistent colors, strokes, and radii",
+            "link": "https://github.com/shree5k/soul-component-styler",
+            "image": "assets/plugins/Soul Tokens Mapper.png"
+        }
+    ],
+    "externalLinks": [
+        {
+            "name": "Layers",
+            "link": "https://layers.to/shreeramk",
+            "images": ["assets/work/work-1.png", "assets/work/work-2.png", "assets/work/work-3.png"]
+        },
+        {
+            "name": "Twitter/X",
+            "link": "https://x.com/shree5k",
+            "images": ["assets/work/twitter-1.png", "assets/work/twitter-2.png"]
+        },
+        {
+            "name": "GitHub",
+            "link": "https://github.com/shree5k",
+            "images": ["assets/work/github-2.png", "assets/work/github-1.png"]
+        }
+    ]
+}

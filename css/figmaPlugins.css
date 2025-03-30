@@ -1,0 +1,46 @@
+.link-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    flex-direction: row;
+}
+.plugin-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.plugin-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.plugin-text .title {
+    color: var(--color-text-primary);
+}
+
+.plugin-text .description {
+    font-weight: 350;
+}
+.topic-item {
+    padding: 0.538rem 0.438rem;
+    padding-left: 0px;
+}
+.home-link-aside {
+    position: absolute;
+    top: 2rem;
+    left: -8rem;
+    z-index: 100;
+    padding: 2.6rem 0;
+}
+.home-link {
+    margin-left: 0;
+    padding-left: 0;
+    color: var(--color-text-tertiary);
+    font-weight: 600;
+}
+.home-link:hover {
+    color: var(--color-text-secondary);
+}

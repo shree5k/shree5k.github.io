@@ -1,0 +1,30 @@
+body {
+    animation: pageLoad 0.35s cubic-bezier(0.4, 0, 0.2, 1.2) forwards;
+}
+
+@keyframes pageLoad {
+    0% {
+        filter: blur(24px);
+        opacity: 0;
+    }
+    25% {
+        filter: blur(18px);
+        opacity: 0.2;
+    }
+    50% {
+        filter: blur(12px);
+        opacity: 0.4;
+    }
+    75% {
+        filter: blur(6px);
+        opacity: 0.8;
+    }
+    90% {
+        filter: blur(3px);
+        opacity: 0.9;
+    }
+    100% {
+        filter: blur(0);
+        opacity: 1;
+    }
+}
