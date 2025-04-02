@@ -3,7 +3,7 @@
         {
             "name": "Figma Plugins",
             "description": "Crafting tools for better workflows",
-            "link": "figmaPlugins.html",
+            "link": "plugins.html",
             "tag_id": "000001",
             "openInNewTab": false,
             "images": ["assets/plugins/Soul Tokens Mapper.png", "assets/plugins/Soul Reusability Score.png"]
