@@ -6,7 +6,7 @@
             "link": "plugins.html",
             "tag_id": "000001",
             "openInNewTab": false,
-            "images": ["assets/plugins/Soul Tokens Mapper.png", "assets/plugins/Soul Reusability Score.png"]
+            "images": ["assets/plugins/Soul Tokens Mapper.png", "assets/plugins/Soul Documentation Specs.png"]
         },
         {
             "name": "Designer Excuses - Raycast",
@@ -33,16 +33,16 @@
             "image": "assets/plugins/Soul Tokens Mapper.png"
         },
         {
-            "name": "Soul Reusability Score",
-            "description": "Calculates design component reusability with precision",
-            "link": "https://github.com/shree5k/soul-reusability-score",
-            "image": "assets/plugins/Soul Reusability Score.png"
+            "name": "Soul Documentation Specs",
+            "description": "Automates and speeds up component specs creation",
+            "link": "https://github.com/shree5k",
+            "image": "assets/plugins/Soul Documentation Specs.png"
         },
         {
-            "name": "Soul Component Styler",
-            "description": "Styles component sets with consistent colors, strokes, and radii",
-            "link": "https://github.com/shree5k/soul-component-styler",
-            "image": "assets/plugins/Soul Tokens Mapper.png"
+            "name": "Sorus",
+            "description": "Powering all things Soul Design System at JioHotstar",
+            "link": "https://github.com/shree5k",
+            "image": "assets/plugins/Sorus.png"
         }
     ],
     "externalLinks": [
