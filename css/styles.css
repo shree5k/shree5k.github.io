@@ -7,12 +7,9 @@
     --color-text-tertiary: #58595A;
     /* Typography */
     --font-primary: "something-font", serif;
-    --font-size-sm: 1.125rem;
-    --font-size-mobile: 0.875rem;
+    --font-size-desktop: 1.125rem;
+    --font-size-mobile: 1rem;
     --font-weight: 500;
-    --font-size-md: 1.15rem;
-    --font-size-base: clamp(0.8em, 2.5vw, 1.1em);
-    --font-size-lg: clamp(1.2em, 4vw, 1.4em);
     /* Spacing */
     --space-xxs: 0px;
     --space-xs: 0.125rem;
@@ -78,13 +75,13 @@ p {
 #section-title {
     margin: 0;
     color: var(--color-text-primary);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-desktop);
     font-weight: var(--font-weight);
 }
 /* Component: Subtitle */
 .subtitle {
     color: var(--color-text-secondary);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-desktop);
     font-weight: var(--font-weight);
 }
 .subtitle-container {
@@ -116,7 +113,7 @@ p {
     border-radius: 8px;
     width: fit-content;
     position: relative;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-desktop);
     font-weight: var(--font-weight);
     text-decoration: none;
     text-transform: none;
@@ -278,6 +275,9 @@ p {
         padding: 0 !important;
         margin: 0 !important;
         font-size: var(--font-size-mobile);
+    }
+    .hover-image {
+        display: none !important;
     }
 }
 @media screen and (max-width: 480px) {
