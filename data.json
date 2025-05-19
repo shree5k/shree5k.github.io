@@ -17,13 +17,14 @@
             "images": ["assets/plugins/Raycast-1.png"]
         },
         {
-            "name": "Kannada Archives",
-            "description": "All things kannada in a digital capsule",
-            "link": "https://shree5k.github.io/kannada-archives",
-            "tag_id": "241207",
+            "name": "Match & Watch",
+            "description": "Mashes your watchlist with a friend’s to help you finally agree on a movie",
+            "link": "https://matchand.watch/",
+            "tag_id": "250507",
             "openInNewTab": true,
-            "images": ["assets/plugins/kannada.png"]
+            "images": ["assets/plugins/matchandwatch.png"]
         }
+
     ],
     "plugins": [
         {
@@ -52,7 +53,7 @@
             "images": ["assets/work/work-1.png", "assets/work/work-2.png", "assets/work/work-3.png"]
         },
         {
-            "name": "Twitter/X",
+            "name": "Twitter",
             "link": "https://x.com/shree5k",
             "images": ["assets/work/twitter-1.png", "assets/work/twitter-2.png"]
         },

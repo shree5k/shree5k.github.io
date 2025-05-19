@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Kannada Archives",
+        "description": "All things kannada in a digital capsule",
+        "link": "https://shree5k.github.io/kannada-archives",
+        "tag_id": "241207",
+        "openInNewTab": true,
+        "images": ["assets/plugins/kannada.png"]
+    },
+    {
+        "name": "Web Lab",
+        "description": "A playful collection of experiments on web",
+        "link": "https://shree5k.github.io/web-lab",
+        "tag_id": "241207",
+        "openInNewTab": true,
+        "images": ["assets/plugins/web-lab.png"]
+    }
+]

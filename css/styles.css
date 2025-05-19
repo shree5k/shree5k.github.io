@@ -7,7 +7,7 @@
     --color-text-tertiary: #58595A;
     /* Typography */
     --font-primary: "something-font", serif;
-    --font-size-desktop: 1.125rem;
+    --font-size-desktop: 1.063rem;
     --font-size-mobile: 1.063rem;
     --font-weight: 500;
     /* Spacing */
@@ -148,7 +148,8 @@ p {
 .hover-image {
     position: absolute;
     top: 350%;
-    left: 200%;
+    left: 100%;
+    margin-left: calc(var(--space-sm) + 38px);
     transform: translateY(-50%) scale(0);
     width: 180px;
     height: auto;
@@ -177,12 +178,12 @@ p {
 }
 .projects-hover-image-width {
     top: 150%;
-    left: 150%;
+    left: 100%;
     width: 88px;
 }
 .hover-effect .hover-image:only-child {
     top: 150%;
-    left: 120%;
+    left: 100%;
 }
 .outdoor-text {
     position: relative;
