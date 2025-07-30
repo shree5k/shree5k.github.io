@@ -26,4 +26,4 @@ export function setupHoverEffect(container) {
         item.addEventListener('mouseenter', () => moveBackground(item));
         item.addEventListener('mouseleave', () => hideBackground());
     });
-} 
+}
