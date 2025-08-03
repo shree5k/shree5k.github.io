@@ -15,15 +15,6 @@ async function fetchText(url) {
     return await response.text();
 }
 
-function preloadLogo() {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Failed to load logo image'));
-        img.src = 'assets/logo.png';
-    });
-}
-
 function displayMessage(container, message) {
     container.innerHTML = `<div class="error-message">${message}</div>`;
 }
@@ -85,47 +76,8 @@ async function loadIntroContainer() {
     }
 }
 
-function hideSections() {
-    const sections = document.querySelectorAll('.section-container');
-    sections.forEach(section => {
-        section.style.opacity = '0';
-        section.style.visibility = 'hidden';
-    });
-}
-
-function showSections() {
-    const sections = document.querySelectorAll('.section-container');
-    sections.forEach(section => {
-        section.style.opacity = '1';
-        section.style.visibility = 'visible';
-        section.style.transition = 'opacity 0.3s ease-in-out';
-    });
-}
-
-async function initializePage() {
-    try {
-        hideSections();
-        
-        await preloadLogo();
-        
-        await Promise.all([
-            loadIntroContainer(),
-            fetchProjects(),
-            setupExternalLinks(setupHoverEffect)
-        ]);
-        
-        showSections();
-    } catch (error) {
-        console.error('Error during page initialization:', error);
-        await Promise.all([
-            loadIntroContainer(),
-            fetchProjects(),
-            setupExternalLinks(setupHoverEffect)
-        ]);
-        showSections();
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    initializePage();
+    loadIntroContainer();
+    fetchProjects();
+    setupExternalLinks(setupHoverEffect);
 });
