@@ -85,18 +85,44 @@ async function loadIntroContainer() {
     }
 }
 
+function hideSections() {
+    const sections = document.querySelectorAll('.section-container');
+    sections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.visibility = 'hidden';
+    });
+}
+
+function showSections() {
+    const sections = document.querySelectorAll('.section-container');
+    sections.forEach(section => {
+        section.style.opacity = '1';
+        section.style.visibility = 'visible';
+        section.style.transition = 'opacity 0.3s ease-in-out';
+    });
+}
+
 async function initializePage() {
     try {
+        hideSections();
+        
         await preloadLogo();
         
-        await loadIntroContainer();
-        await fetchProjects();
-        setupExternalLinks(setupHoverEffect);
+        await Promise.all([
+            loadIntroContainer(),
+            fetchProjects(),
+            setupExternalLinks(setupHoverEffect)
+        ]);
+        
+        showSections();
     } catch (error) {
         console.error('Error during page initialization:', error);
-        await loadIntroContainer();
-        await fetchProjects();
-        setupExternalLinks(setupHoverEffect);
+        await Promise.all([
+            loadIntroContainer(),
+            fetchProjects(),
+            setupExternalLinks(setupHoverEffect)
+        ]);
+        showSections();
     }
 }
 
