@@ -15,6 +15,15 @@ async function fetchText(url) {
     return await response.text();
 }
 
+function preloadLogo() {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load logo image'));
+        img.src = 'assets/logo.png';
+    });
+}
+
 function displayMessage(container, message) {
     container.innerHTML = `<div class="error-message">${message}</div>`;
 }
@@ -76,8 +85,21 @@ async function loadIntroContainer() {
     }
 }
 
+async function initializePage() {
+    try {
+        await preloadLogo();
+        
+        await loadIntroContainer();
+        await fetchProjects();
+        setupExternalLinks(setupHoverEffect);
+    } catch (error) {
+        console.error('Error during page initialization:', error);
+        await loadIntroContainer();
+        await fetchProjects();
+        setupExternalLinks(setupHoverEffect);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    loadIntroContainer();
-    fetchProjects();
-    setupExternalLinks(setupHoverEffect);
+    initializePage();
 });
