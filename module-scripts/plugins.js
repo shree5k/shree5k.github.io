@@ -2,6 +2,17 @@ import { setupHoverEffect } from '/module-scripts/hoverEffect.js';
 
 let pluginsData = null;
 
+function triggerStaggeredAnimation() {
+    const items = document.querySelectorAll('.animated-item');
+    const staggerDelay = 100;
+
+    items.forEach((item, index) => {
+        setTimeout(() => {
+            item.classList.add('visible');
+        }, index * staggerDelay);
+    });
+}
+
 async function fetchData(url) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Failed to load data from ${url}.`);
@@ -15,11 +26,11 @@ function displayPlugins(data) {
         return;
     }
     
-    pluginsContainer.innerHTML = ''; // Clear existing content
+    pluginsContainer.innerHTML = '';
     
     data.plugins.forEach(plugin => {
         const pluginLink = document.createElement('a');
-        pluginLink.className = 'topic-item';
+        pluginLink.className = 'topic-item animated-item';
         pluginLink.href = plugin.link;
         pluginLink.target = '_blank';
         
@@ -70,6 +81,8 @@ async function loadPlugins() {
 }
 
 // Initialize plugins when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    loadPlugins();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadPlugins();
+    triggerStaggeredAnimation();
+    document.body.classList.remove('page-loading');
 });

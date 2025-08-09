@@ -37,6 +37,7 @@ body {
     min-height: 100vh;
     background-color: var(--color-bg-primary);
     font-family: var(--font-primary);
+    transition: opacity 0.8s ease-out, filter 0.8s ease-out;
 }
 #main-container {
     display: flex;
@@ -123,6 +124,7 @@ p {
 }
 .topic-item:hover {
     color: var(--color-text-secondary);
+    z-index: 20;
 }
 .link-content {
     display: flex;
@@ -251,6 +253,17 @@ p {
     vertical-align: middle;
     width: 3.125rem;
     height: 3.125rem;
+}
+.animated-item {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+    filter: blur(4px);
+    transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.animated-item.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
 }
 
 /* Responsive Breakpoints */

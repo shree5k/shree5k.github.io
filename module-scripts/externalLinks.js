@@ -17,7 +17,7 @@ export async function setupExternalLinks(setupHoverEffect) {
             const linkElement = document.createElement('a');
             linkElement.href = link.link;
             linkElement.target = '_blank';
-            linkElement.className = 'topic-item hover-effect';
+            linkElement.className = 'topic-item hover-effect animated-item';
             linkElement.textContent = link.name;
 
             link.images.forEach((imgSrc) => {

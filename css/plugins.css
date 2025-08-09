@@ -1,14 +1,16 @@
 .link-content {
     display: flex;
     align-items: flex-start;
-    gap: 0.8rem;
+    gap: 1rem;
     flex-direction: row;
 }
 .plugin-image {
-    width: 32px;
-    height: 32px;
+    height: 100%;
+    width: auto;
     border-radius: 4px;
     object-fit: cover;
+    align-self: stretch;
+    max-height: 3rem;
 }
 
 .plugin-text {

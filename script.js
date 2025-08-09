@@ -3,6 +3,17 @@ import { setupHoverEffect } from '/module-scripts/hoverEffect.js';
 
 let projectsContainer = null;
 
+function triggerStaggeredAnimation() {
+    const items = document.querySelectorAll('.animated-item');
+    const staggerDelay = 100; 
+
+    items.forEach((item, index) => {
+        setTimeout(() => {
+            item.classList.add('visible');
+        }, index * staggerDelay);
+    });
+}
+
 async function fetchData(url) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Failed to load data from ${url}.`);
@@ -24,7 +35,7 @@ function renderProjects(data) {
     
     data.projects.forEach(repo => {
         const topicLink = document.createElement('a');
-        topicLink.className = 'topic-item hover-effect';
+        topicLink.className = 'topic-item hover-effect animated-item';
         topicLink.href = repo.link;
         topicLink.target = repo.openInNewTab ? '_blank' : '_self';
         topicLink.textContent = repo.name;
@@ -76,8 +87,14 @@ async function loadIntroContainer() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadIntroContainer();
-    fetchProjects();
-    setupExternalLinks(setupHoverEffect);
+document.addEventListener('DOMContentLoaded', async () => {
+    const contentLoadingPromises = [
+        loadIntroContainer(),
+        fetchProjects(),
+        setupExternalLinks(setupHoverEffect)
+    ];
+
+    await Promise.all(contentLoadingPromises);
+
+    triggerStaggeredAnimation();
 });

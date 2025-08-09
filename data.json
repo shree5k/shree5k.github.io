@@ -34,16 +34,22 @@
             "image": "assets/plugins/Soul Tokens Mapper.png"
         },
         {
-            "name": "Soul Documentation Specs",
-            "description": "Automates and speeds up component specs creation",
-            "link": "https://github.com/shree5k",
-            "image": "assets/plugins/Soul Documentation Specs.png"
-        },
-        {
             "name": "Sorus",
             "description": "Powering all things Soul Design System at JioHotstar",
             "link": "https://github.com/shree5k",
             "image": "assets/plugins/Sorus.png"
+        },
+        {
+            "name": "Oscar",
+            "description": "Fills with latest posters, title cutouts, tags & descriptions",
+            "link": "https://x.com/shree5k/status/1928428375007264913",
+            "image": "assets/plugins/Oscar.png"
+        },
+        {
+            "name": "Soul Documentation Specs",
+            "description": "Automates and speeds up component specs creation",
+            "link": "https://github.com/shree5k",
+            "image": "assets/plugins/Soul Documentation Specs.png"
         }
     ],
     "externalLinks": [
