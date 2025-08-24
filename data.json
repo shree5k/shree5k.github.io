@@ -2,7 +2,7 @@
     "projects": [
         {
             "name": "Figma Plugins",
-            "description": "Crafting tools for better workflows",
+            "description": "Crafting tools to amplify design abilities",
             "link": "plugins.html",
             "tag_id": "000001",
             "openInNewTab": false,
@@ -50,6 +50,12 @@
             "description": "Automates and speeds up component specs creation",
             "link": "https://github.com/shree5k",
             "image": "assets/plugins/Soul Documentation Specs.png"
+        },
+        {
+            "name": "Just Fill",
+            "description": "Resizes images to fill width, preserving aspect ratio",
+            "link": "https://www.figma.com/community/plugin/1505598858608143992/just-fill",
+            "image": "assets/plugins/Just Fill.png"
         }
     ],
     "externalLinks": [
