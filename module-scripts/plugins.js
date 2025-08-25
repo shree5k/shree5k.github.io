@@ -15,40 +15,37 @@ function displayPlugins(data) {
         console.error('Plugins container not found');
         return;
     }
-    
+
     pluginsContainer.innerHTML = '';
-    
+
     data.plugins.forEach(plugin => {
         const pluginLink = document.createElement('a');
         pluginLink.className = 'topic-item animated-item';
         pluginLink.href = plugin.link;
         pluginLink.target = '_blank';
-        
+
         const linkContent = document.createElement('div');
         linkContent.className = 'link-content';
-        
-        // Create image element
+
         const image = document.createElement('img');
         image.className = 'plugin-image';
         image.src = plugin.image;
         image.alt = plugin.name;
-        
-        // Create a container for title and description
+
         const textContainer = document.createElement('div');
         textContainer.className = 'plugin-text';
-        
+
         const title = document.createElement('span');
         title.className = 'title';
         title.textContent = plugin.name;
-        
+
         const description = document.createElement('span');
         description.className = 'description';
         description.textContent = plugin.description;
-        
+
         textContainer.appendChild(title);
         textContainer.appendChild(description);
-        
-        // Add elements to link content: image | text
+
         linkContent.appendChild(image);
         linkContent.appendChild(textContainer);
         pluginLink.appendChild(linkContent);
@@ -70,9 +67,14 @@ async function loadPlugins() {
     }
 }
 
-// Initialize plugins when DOM is loaded
 document.addEventListener('DOMContentLoaded', async () => {
     await loadPlugins();
-    triggerStaggeredAnimation();
-    document.body.classList.remove('page-loading');
+
+    const bodyAnimationDuration = 350;
+
+    const delayBeforeStaggeredAnimation = bodyAnimationDuration + 50;
+
+    setTimeout(() => {
+        triggerStaggeredAnimation();
+    }, delayBeforeStaggeredAnimation);
 });

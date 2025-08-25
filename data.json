@@ -23,6 +23,14 @@
             "tag_id": "250507",
             "openInNewTab": true,
             "images": ["assets/plugins/matchandwatch.png"]
+        },
+        {
+            "name": "Web Lab",
+            "description": "Engineering surprises",
+            "link": "https://shreeramk.com/web-lab/",
+            "tag_id": "250424",
+            "openInNewTab": true,
+            "images": ["assets/plugins/Web Lab.png"]
         }
 
     ],

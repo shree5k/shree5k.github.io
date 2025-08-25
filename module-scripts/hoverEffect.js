@@ -9,11 +9,16 @@ export function setupHoverEffect(container) {
     }
 
     function moveBackground(item) {
-        const { offsetTop, offsetHeight, offsetWidth, offsetLeft } = item;
-        hoverBackground.style.top = offsetTop + 1 + 'px';
-        hoverBackground.style.left = offsetLeft + -8 + 'px';
-        hoverBackground.style.width = offsetWidth + 'px';
-        hoverBackground.style.height = offsetHeight + 'px';
+        const containerRect = container.getBoundingClientRect();
+        const itemRect = item.getBoundingClientRect();
+    
+        const top = itemRect.top - containerRect.top;
+        const left = itemRect.left - containerRect.left;
+        
+        hoverBackground.style.top = top + 1 + 'px';
+        hoverBackground.style.left = left - 8 + 'px';
+        hoverBackground.style.width = itemRect.width + 'px';
+        hoverBackground.style.height = itemRect.height + 'px';
         hoverBackground.style.opacity = '1';
         hoverBackground.style.zIndex = '-1';
     }

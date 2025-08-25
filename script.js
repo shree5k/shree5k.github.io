@@ -23,14 +23,23 @@ function displayMessage(container, message) {
 function renderProjects(data) {
     const fragment = document.createDocumentFragment();
     
-    data.projects.forEach(repo => {
+    data.projects.forEach((repo, index) => {
+        const projectWrapper = document.createElement('div');
+        projectWrapper.className = 'project-item-wrapper animated-item';
+
+        const line = document.createElement('span');
+        line.className = 'project-line';
+
+        const number = document.createElement('span');
+        number.className = 'project-number';
+        number.textContent = String(index + 1).padStart(2, '0');
+
         const topicLink = document.createElement('a');
-        topicLink.className = 'topic-item hover-effect animated-item';
+        topicLink.className = 'topic-item hover-effect';
         topicLink.href = repo.link;
         topicLink.target = repo.openInNewTab ? '_blank' : '_self';
         topicLink.textContent = repo.name;
 
-        // Add project images from the images array
         if (repo.images) {
             repo.images.forEach((imgSrc) => {
                 const imgElement = document.createElement('img');
@@ -40,8 +49,12 @@ function renderProjects(data) {
                 topicLink.appendChild(imgElement);
             });
         }
+        
+        projectWrapper.appendChild(topicLink);
+        projectWrapper.appendChild(line);
+        projectWrapper.appendChild(number);
 
-        fragment.appendChild(topicLink);
+        fragment.appendChild(projectWrapper);
     });
 
     projectsContainer.innerHTML = '';
