@@ -9,6 +9,14 @@
             "images": ["assets/plugins/Soul Tokens Mapper.png", "assets/plugins/Soul Documentation Specs.png"]
         },
         {
+            "name": "Web Lab",
+            "description": "Engineering surprises",
+            "link": "https://shreeramk.com/web-lab/",
+            "tag_id": "250424",
+            "openInNewTab": true,
+            "images": ["assets/plugins/Web Lab.png"]
+        },
+        {
             "name": "Designer Excuses - Raycast",
             "description": "Extension that generates witty and playful excuses",
             "link": "https://www.raycast.com/shreeram/designer-excuses",
@@ -23,16 +31,7 @@
             "tag_id": "250507",
             "openInNewTab": true,
             "images": ["assets/plugins/matchandwatch.png"]
-        },
-        {
-            "name": "Web Lab",
-            "description": "Engineering surprises",
-            "link": "https://shreeramk.com/web-lab/",
-            "tag_id": "250424",
-            "openInNewTab": true,
-            "images": ["assets/plugins/Web Lab.png"]
         }
-
     ],
     "plugins": [
         {
@@ -71,6 +70,11 @@
             "name": "Layers",
             "link": "https://layers.to/shreeramk",
             "images": ["assets/work/work-1.png", "assets/work/work-2.png", "assets/work/work-3.png"]
+        },
+        {
+            "name": "Medium",
+            "link": "https://medium.com/@shreeramk",
+            "images": ["assets/work/medium-1.png", "assets/work/medium-2.png"]
         },
         {
             "name": "Twitter",
