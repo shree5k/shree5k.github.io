@@ -45,7 +45,7 @@ body {
     flex-direction: column;
     width: 460px;
     max-width: var(--container-max-width);
-    padding: 6.4rem 2rem;
+    padding: 5rem 2rem;
     margin: 0 auto;
     gap: var(--space-2xl);
     position: relative;
