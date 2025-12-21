@@ -77,14 +77,14 @@
             "images": ["assets/work/medium-1.png", "assets/work/medium-2.png"]
         },
         {
-            "name": "Twitter",
-            "link": "https://x.com/shree5k",
-            "images": ["assets/work/twitter-1.png", "assets/work/twitter-2.png"]
-        },
-        {
             "name": "GitHub",
             "link": "https://github.com/shree5k",
             "images": ["assets/work/github-2.png", "assets/work/github-1.png"]
+        },
+        {
+            "name": "Twitter",
+            "link": "https://x.com/shree5k",
+            "images": ["assets/work/twitter-1.png", "assets/work/twitter-2.png"]
         }
     ]
 }
