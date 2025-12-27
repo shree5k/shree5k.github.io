@@ -52,7 +52,7 @@ body {
 .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+    gap: 56px;
     opacity: 0;
     transform: translateY(20px);
     transition:
@@ -73,8 +73,8 @@ body {
 
 .grid-item {
     position: relative;
+    cursor: pointer;
 }
-
 
 .grid-item img {
     width: 100%;
@@ -97,6 +97,143 @@ body {
     z-index: 10;
 }
 
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.lightbox.active {
+    opacity: 1;
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.95);
+}
+
+.lightbox.active ~ body {
+    overflow: hidden;
+}
+
+body.lightbox-open {
+    overflow: hidden;
+}
+
+.lightbox img {
+    max-width: 90%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 10px;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lightbox.active img {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.lightbox-close {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.3s ease 0.15s, transform 0.3s ease 0.15s;
+}
+
+.lightbox.active .lightbox-close {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.lightbox-close::before,
+.lightbox-close::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 1.5px;
+    background: #ffffff8c;
+}
+
+.lightbox-close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.lightbox-close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.lightbox-arrow {
+    position: fixed;
+    top: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease 0.15s, transform 0.3s ease 0.15s;
+}
+
+.lightbox.active .lightbox-arrow {
+    opacity: 1;
+}
+
+.lightbox-arrow::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-left: 1.5px solid #fff;
+    border-bottom: 1.5px solid #fff;
+}
+
+.lightbox-arrow-left {
+    left: 24px;
+    transform: translateY(-50%) translateX(-8px);
+}
+
+.lightbox.active .lightbox-arrow-left {
+    transform: translateY(-50%) translateX(0);
+}
+
+.lightbox-arrow-left::before {
+    transform: translate(-30%, -50%) rotate(45deg);
+}
+
+.lightbox-arrow-right {
+    right: 24px;
+    transform: translateY(-50%) translateX(8px);
+}
+
+.lightbox.active .lightbox-arrow-right {
+    transform: translateY(-50%) translateX(0);
+}
+
+.lightbox-arrow-right::before {
+    transform: translate(-70%, -50%) rotate(-135deg);
+}
+
 @media (max-width: 768px) {
     .grid {
         grid-template-columns: 1fr;
@@ -108,5 +245,15 @@ body {
 
     body {
         padding: 40px 20px;
+    }
+
+    .grid-item {
+        cursor: default;
+    }
+
+    .lightbox,
+    .lightbox-close,
+    .lightbox-arrow {
+        display: none !important;
     }
 }
