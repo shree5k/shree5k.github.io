@@ -40,7 +40,6 @@
         summary {
             font-weight: normal;
             text-align: left;
-            cursor: pointer;
         }
 
         pre {
@@ -51,6 +50,7 @@
             line-height: 1.6;
             padding-top: 12px;
             padding-bottom: 24px;
+            color: grey;
         }
 
         .heading {
@@ -69,7 +69,7 @@
             line-height: 1.2;
             font-size: 14px;
             cursor: url('can.cur'), auto;
-            transition: all 0.8s ease;
+            transition: all 0.4s ease;
         }
 
         .garden-plant:hover .bud {
@@ -83,14 +83,14 @@
         .bud {
             display: block;
             color: #c4869c;
-            transition: all 1.5s ease;
+            transition: all 0.6s ease;
             text-align: center;
         }
 
         .stem {
             display: block;
             color: #6a8a6a;
-            transition: all 0.8s ease;
+            transition: all 0.4s ease;
             text-align: center;
         }
 
@@ -99,10 +99,9 @@
             opacity: 0;
             color: #d4769c;
             font-style: italic;
-            font-size: 11px;
+            font-size: 13px;
             line-height: 1.25;
             position: absolute;
-            bottom: calc(100% - 12px);
             left: 50%;
             margin-bottom: 0;
             transform-origin: bottom center;
@@ -151,7 +150,7 @@
         }
 
         .garden-water-drop.active {
-            animation: garden-drop 1s ease-out forwards;
+            animation: garden-drop 0.5s ease-out forwards;
         }
 
         @keyframes garden-drop {
@@ -182,12 +181,6 @@
 
         <p class="heading"> -&gt; quote/poem selection</p>
         <details>
-            <summary>when you need hope and feel lost</summary>
-            <pre>unless someone like you cares a whole awful lot,
-nothing is going to get better. it's not.</pre>
-        </details>
-
-        <details>
             <summary>when life hurts you</summary>
             <pre>the only way out
 ...
@@ -199,29 +192,6 @@ is through</pre>
             <pre>your absence has gone through me
 like thread through a needle.
 everything i do is stitched with its color.</pre>
-        </details>
-
-        <details>
-            <summary>when you dissociate and need help grounding</summary>
-            <pre>out of the night that covers me,
-      black as the pit from pole to pole,
-i thank whatever gods may be
-      for my unconquerable soul.
-
-in the fell clutch of circumstance
-      i have not winced nor cried aloud.
-under the bludgeonings of chance
-      my head is bloody, but unbowed.
-
-beyond this place of wrath and tears
-      looms but the horror of the shade,
-and yet the menace of the years
-      finds and shall find me unafraid.
-
-it matters not how strait the gate,
-      how charged with punishments the scroll,
-i am the master of my fate,
-      i am the captain of my soul.</pre>
         </details>
 
         <details>
@@ -254,13 +224,6 @@ that our hearts are made, not for the finite, but for *infinity*
 the discontent of our souls would appear to be the sign and seal
 
                             of their divinity</pre>
-        </details>
-
-        <details>
-            <summary>when you want to have another, smaller existential crisis</summary>
-            <pre>life is but a dream for the dead
-    swim in illusion
-    or sink in dread</pre>
         </details>
 
         <details>
@@ -507,7 +470,7 @@ there's this little street and this little house.</pre>
 
         function gardenWrapInSpans(text) {
             return text.split('').map((char, i) =>
-                `<span style="transition-delay: ${i * 0.05}s">${char}</span>`
+                `<span style="transition-delay: ${i * 0.02}s">${char}</span>`
             ).join('');
         }
 
@@ -526,7 +489,21 @@ there's this little street and this little house.</pre>
             const flowerColor = gardenFlowerColors[index % gardenFlowerColors.length];
             const flowerText = gardenCreateFlower(quote);
 
-            plant.innerHTML = `<span class="flower" style="color: ${flowerColor}">${flowerText}</span><span class="bud">${plantType.bud}</span><span class="stem">${plantType.stem.join('\n')}</span>`;
+            // Calculate positioning for proper flower placement above the bud
+            const stemLines = plantType.stem.length;
+            // Different positioning based on stem length to fix spacing issues
+            let flowerBottom;
+            if (stemLines === 2) {
+                flowerBottom = 40; // For 2-line stems like plant 6
+            } else if (stemLines === 3) {
+                flowerBottom = 60; // For 3-line stems like plant 5
+            } else if (stemLines === 4) {
+                flowerBottom = 80; // For 4-line stems
+            } else {
+                flowerBottom = 40; // Default
+            }
+
+            plant.innerHTML = `<span class="flower" style="color: ${flowerColor}; bottom: ${flowerBottom}px">${flowerText}</span><span class="bud">${plantType.bud}</span><span class="stem">${plantType.stem.join('\n')}</span>`;
             plant.onclick = () => gardenWaterPlant(plant);
 
             return plant;
@@ -578,7 +555,7 @@ there's this little street and this little house.</pre>
                 }, i * 30);
             }
 
-            setTimeout(() => plant.classList.add('bloomed'), 1000);
+            setTimeout(() => plant.classList.add('bloomed'), 500);
         }
 
         function gardenCreateWaterDrop(x, y) {
