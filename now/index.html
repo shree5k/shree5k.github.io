@@ -1,90 +1,209 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <style>
-            body {
-                transition: opacity ease-in 0.2s;
-                max-width: 600px;
-                margin: 0 auto;
-                padding: 40px 20px;
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>now</title>
+
+    <style>
+        body {
+            transition: opacity ease-in 0.2s;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        body[unresolved] {
+            opacity: 0;
+            display: block;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #main p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        details {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        summary {
+            font-weight: normal;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        pre {
+            font-style: italic;
+            margin: 0;
+            white-space: pre-wrap;
+            text-align: left;
+            line-height: 1.6;
+            padding-top: 12px;
+            padding-bottom: 24px;
+        }
+
+        .heading {
+            width: 100%;
+            max-width: 500px;
+            padding-bottom: 12px;
+        }
+
+        body.garden-active {
+            cursor: url('can.cur'), auto;
+        }
+
+        .garden-plant {
+            position: absolute;
+            white-space: pre;
+            line-height: 1.2;
+            font-size: 14px;
+            cursor: url('can.cur'), auto;
+            transition: all 0.8s ease;
+        }
+
+        .garden-plant:hover .bud {
+            color: #b4768c;
+        }
+
+        .garden-plant:hover .stem {
+            color: #4a8a4a;
+        }
+
+        .bud {
+            display: block;
+            color: #c4869c;
+            transition: all 1.5s ease;
+            text-align: center;
+        }
+
+        .stem {
+            display: block;
+            color: #6a8a6a;
+            transition: all 0.8s ease;
+            text-align: center;
+        }
+
+        .flower {
+            display: block;
+            opacity: 0;
+            color: #d4769c;
+            font-style: italic;
+            font-size: 11px;
+            line-height: 1.25;
+            position: absolute;
+            bottom: calc(100% - 12px);
+            left: 50%;
+            margin-bottom: 0;
+            transform-origin: bottom center;
+            text-align: center;
+            width: max-content;
+        }
+
+        .flower span {
+            display: inline-block;
+            opacity: 0;
+            transform: scale(0) translateY(0);
+            transition: all 0.4s ease;
+        }
+
+        .garden-plant.bloomed .bud {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .garden-plant.bloomed .stem {
+            color: #4a9a4a;
+        }
+
+        .garden-plant.bloomed .flower {
+            opacity: 1;
+            transform: translateX(-50%);
+            cursor: default;
+        }
+
+        .garden-plant.bloomed .flower span {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .garden-water-drop {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            font-size: 10px;
+            opacity: 0;
+            color: #7bb3d4;
+            font-family: "Courier New", monospace;
+            line-height: 1;
+            white-space: pre;
+            font-weight: bold;
+        }
+
+        .garden-water-drop.active {
+            animation: garden-drop 1s ease-out forwards;
+        }
+
+        @keyframes garden-drop {
+            0% {
+                opacity: 1;
+                transform: translateY(0) translateX(0);
             }
-            body[unresolved] {
+            40% {
+                opacity: 1;
+                transform: translateY(12px) translateX(0);
+            }
+            80% {
+                opacity: 0.7;
+                transform: translateY(35px) translateX(0);
+            }
+            100% {
                 opacity: 0;
-                display: block;
-                overflow: hidden;
-                position: relative;
+                transform: translateY(45px) translateX(0);
             }
+        }
+    </style>
+</head>
 
-            #main {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 8px;
-            }
+<body>
+    <div id="main">
+        <p>hello, stranger</p>
+        <p style="margin-bottom: 32px;">how did you end up here. please get comfy and stay awhile :3</p>
 
-            #main p {
-                margin: 0;
-                line-height: 1.6;
-            }
-
-            details {
-                width: 100%;
-                max-width: 500px;
-            }
-
-            summary {
-                font-weight: normal;
-                text-align: left;
-            }
-
-            pre {
-                font-style: italic;
-                margin: 0;
-                white-space: pre-wrap;
-                text-align: left;
-                line-height: 1.6;
-                padding-top: 12px;
-                padding-bottom: 24px;
-            }
-            .heading {
-                width: 100%;
-                max-width: 500px;
-                padding-bottom: 12px;
-            }
-        </style>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>now</title>
-    </head>
-    <body>
-        <div id="main">
-            <p>hello, stranger</p>
-            <p style="margin-bottom: 32px;">how did you end up here. please get comfy and stay awhile :3</p>
-            <p class="heading"> -&gt; quote/poem selection</p>
-
-            <details>
-                <summary>when you need hope and feel lost</summary>
-                <pre>unless someone like you cares a whole awful lot,
+        <p class="heading"> -&gt; quote/poem selection</p>
+        <details>
+            <summary>when you need hope and feel lost</summary>
+            <pre>unless someone like you cares a whole awful lot,
 nothing is going to get better. it's not.</pre>
-            </details>
+        </details>
 
-            <details>
-                <summary>when life hurts you</summary>
-                <pre>the only way out
+        <details>
+            <summary>when life hurts you</summary>
+            <pre>the only way out
 ...
 is through</pre>
-            </details>
+        </details>
 
-            <details>
-                <summary>when you remember them again, but it's okay</summary>
-                <pre>your absence has gone through me
+        <details>
+            <summary>when you remember them again, but it's okay</summary>
+            <pre>your absence has gone through me
 like thread through a needle.
 everything i do is stitched with its color.</pre>
-            </details>
+        </details>
 
-            <details>
-                <summary>when you dissociate and need help grounding</summary>
-                <pre>out of the night that covers me,
+        <details>
+            <summary>when you dissociate and need help grounding</summary>
+            <pre>out of the night that covers me,
       black as the pit from pole to pole,
 i thank whatever gods may be
       for my unconquerable soul.
@@ -103,11 +222,11 @@ it matters not how strait the gate,
       how charged with punishments the scroll,
 i am the master of my fate,
       i am the captain of my soul.</pre>
-            </details>
+        </details>
 
-            <details>
-                <summary>when you want to have an existential crisis and cry</summary>
-                <pre>this, then, is the human problem:
+        <details>
+            <summary>when you want to have an existential crisis and cry</summary>
+            <pre>this, then, is the human problem:
 - there is a price to be paid for every increase in consciousness
 - we cannot be more sensitive to pleasure without being more sensitive to pain
 - by remembering the past, we can plan for the future
@@ -135,29 +254,29 @@ that our hearts are made, not for the finite, but for *infinity*
 the discontent of our souls would appear to be the sign and seal
 
                             of their divinity</pre>
-            </details>
+        </details>
 
-            <details>
-                <summary>when you want to have another, smaller existential crisis</summary>
-                <pre>life is but a dream for the dead
+        <details>
+            <summary>when you want to have another, smaller existential crisis</summary>
+            <pre>life is but a dream for the dead
     swim in illusion
     or sink in dread</pre>
-            </details>
+        </details>
 
-            <details>
-                <summary>when you feel cynical</summary>
-                <pre>wheresoever you go,
+        <details>
+            <summary>when you feel cynical</summary>
+            <pre>wheresoever you go,
 go with all your heart.</pre>
-            </details>
+        </details>
 
-            <details>
-                <summary>when you feel overwhelmed by the past</summary>
-                <pre>despite everything, it's still you.</pre>
-            </details>
+        <details>
+            <summary>when you feel overwhelmed by the past</summary>
+            <pre>despite everything, it's still you.</pre>
+        </details>
 
-            <details>
-                <summary>when you feel alone, and need to know that you aren't. when you need to know that other people have felt the same way that you do. that your suffering is heard and echoed and felt through time and space.</summary>
-                <pre>love has gone and left me and the days are all alike;
+        <details>
+            <summary>when you feel alone, and need to know that you aren't.</summary>
+            <pre>love has gone and left me and the days are all alike;
 eat i must, and sleep i will, — and would that night were here!
 but ah! — to lie awake and hear the slow hours strike!
 would that it were day again! — with twilight near!
@@ -171,124 +290,323 @@ love has gone and left me, — and the neighbors knock and borrow,
 and life goes on forever like the gnawing of a mouse, —
 and to-morrow and to-morrow and to-morrow and to-morrow
 there's this little street and this little house.</pre>
-            </details>
+        </details>
 
-            <details>
-                <summary>when you're stuck in your head and need to move forward</summary>
-                <pre>action, even if flawed, creates momentum. 
+        <details>
+            <summary>when you're stuck in your head and need to move forward</summary>
+            <pre>action, even if flawed, creates momentum.
         Waiting for the ideal can lead to inaction.
-        
-        an imperfect first draft, first workout, or first conversation 
+
+        an imperfect first draft, first workout, or first conversation
         shows us exactly where to improve next.
-        
+
         momentum is a teacher that theory alone can't match.</pre>
-            </details>
-        
-            <details>
-                <summary>when you want to quit</summary>
-                <pre>if you quit now, you'll end up right back where you first began.
+        </details>
+
+        <details>
+            <summary>when you want to quit</summary>
+            <pre>if you quit now, you'll end up right back where you first began.
         and when you first began, you dreamed to be where you are right now.
-        
-        never quit something with great long term potential 
+
+        never quit something with great long term potential
         just because you can't deal with the stress of the moment.</pre>
-            </details>
-        
-            <details>
-                <summary>when worry consumes you</summary>
-                <pre>worry does not empty tomorrow of its sorrow,
+        </details>
+
+        <details>
+            <summary>when worry consumes you</summary>
+            <pre>worry does not empty tomorrow of its sorrow,
         it empties today of its strength.
-        
+
         does this affect my mind thinking too much of the future?
         write down the what if's. be okay with whatever outcome.
         whatever happens will eventually happen.
         you have no control over it.
-        
+
         action & forget.</pre>
-            </details>
-        
-            <details>
-                <summary>when you need perspective on the present</summary>
-                <pre>you don't actually know how you'll feel in 10 years about any of this—
-        you'll be different then, full of new perspectives and desires 
+        </details>
+
+        <details>
+            <summary>when you need perspective on the present</summary>
+            <pre>you don't actually know how you'll feel in 10 years about any of this—
+        you'll be different then, full of new perspectives and desires
         you can't imagine yet.
-        
+
         your present matters. it's actually all you have.
-        
+
         what kind of day is this?
         one where you give to the future
         or one where you receive from the present?</pre>
-            </details>
-        
-            <details>
-                <summary>when you need to let go</summary>
-                <pre>for your own sanity, move on like you never knew them 
+        </details>
+
+        <details>
+            <summary>when you need to let go</summary>
+            <pre>for your own sanity, move on like you never knew them
         because in reality you never did.
-        
+
         you suffer as long as you decide to.
-        
+
         don't get attached to anything.
         ಆಸೆಯೇ ದುಃಖಕ್ಕೆ ಮೂಲ
         (desire is the root of sorrow)</pre>
-            </details>
-        
-            <details>
-                <summary>when you've lost your way</summary>
-                <pre>we don't see things as they are, we see them as we are.
-        
-        the real voyage of discovery is not in seeking new landscapes 
+        </details>
+
+        <details>
+            <summary>when you've lost your way</summary>
+            <pre>we don't see things as they are, we see them as we are.
+
+        the real voyage of discovery is not in seeking new landscapes
         but having new eyes.
-        
-        the portal to every next level is through the parts of yourself 
+
+        the portal to every next level is through the parts of yourself
         that you avoid.</pre>
-            </details>
-        
-            <details>
-                <summary>when discipline feels impossible</summary>
-                <pre>consistency isn't about doing the same thing every day;
+        </details>
+
+        <details>
+            <summary>when discipline feels impossible</summary>
+            <pre>consistency isn't about doing the same thing every day;
         it's about showing up with the same intention.
-        
-        once you find that rhythm, effort fades into ease, 
+
+        once you find that rhythm, effort fades into ease,
         and the process carries itself.
-        
+
         the highest form of discipline is when it becomes invisible—
         when you don't have to think about it.
         that's when your preparation sets you free.</pre>
-            </details>
-        
-            <details>
-                <summary>when you need to take control</summary>
-                <pre>like it or not, we are masters of our fate. 
+        </details>
+
+        <details>
+            <summary>when you need to take control</summary>
+            <pre>like it or not, we are masters of our fate.
         nothing is written.
-        
+
         you must be the master of your own kingdom.
-        
-        having no self control is the most revolting trait 
+
+        having no self control is the most revolting trait
         one can possess.</pre>
-            </details>
-        
-            <details>
-                <summary>when you need peace</summary>
-                <pre>peace isn't the absence of problems,
+        </details>
+
+        <details>
+            <summary>when you need peace</summary>
+            <pre>peace isn't the absence of problems,
         it's the presence of purpose that makes problems worth solving.
-        
-        the happiest people aren't those who've eliminated difficulty 
+
+        the happiest people aren't those who've eliminated difficulty
         from their lives;
         they're those who've found difficulty worth enduring.
-        
+
         move the body, rest the mind.</pre>
-            </details>
-        
-            <details>
-                <summary>when you're waiting for life to begin</summary>
-                <pre>i was waiting for something extraordinary to happen,
+        </details>
+
+        <details>
+            <summary>when you're waiting for life to begin</summary>
+            <pre>i was waiting for something extraordinary to happen,
                 but as the years wasted on, nothing ever did unless i caused it.
                 inspiration is perishable — act on it immediately.
                 the trick is to say yes to life.
                 start small.
                 </pre>
-            </details>
+        </details>
 
-            <p class="heading" style="margin-top: 32px; font-style: italic;">๑ï⋆˚ have fun ๑ï⋆˚</p>
+        <p class="heading" style="margin-top: 32px; font-style: italic;">๑ï⋆˚ have fun ๑ï⋆˚</p>
+    </div>
+
+    <div style="margin-top: 4px; overflow-x: hidden; cursor: url('can.cur'), auto;">
+        <div style="position: relative; overflow: visible; max-width: 100%; margin: 0 auto; cursor: url('can.cur'), auto;">
+            <div id="garden-footer" style="position: relative; overflow: visible; width: 100%; max-width: 900px; margin: 0 auto; cursor: url('can.cur'), auto;"></div>
         </div>
+    </div>
+
+
+    <script>
+        const gardenQuotes = [
+            "worse is better",
+            "imperfect efforts",
+            "have problem, don't care, have no problem - pepe",
+            "weekend flirt",
+            "mind like monk, body like athlete",
+            "free mind"
+        ];
+
+        const gardenBudTypes = [
+            { bud: ' (*)', stem: ['  |', ' \\|/', '^^^^^'] },
+            { bud: ' (o)', stem: ['  |', '  |', ' \\|/', '^^^'] },
+            { bud: '  @', stem: ['  |', ' \\|/', '^^^^^'] },
+            { bud: 'UUU', stem: [' \\|/', '^^^'] },
+            { bud: ' .-. \n( o )', stem: ['  |', ' \\|/', '^^^^^'] },
+            { bud: ' /\\\n/**\\', stem: ['  |', ' \\|/', '^^^'] },
+            { bud: ' +\n\\|/', stem: ['  |', '^^^'] },
+            { bud: '._.\n\\|/', stem: ['  |', ' \\|/', '^^^^^'] },
+            { bud: ' ~', stem: ['  |', '  |', ' \\|/', '^^^^^'] },
+            { bud: ' o\n.|.', stem: ['  |', ' \\|/', '^^^'] }
+        ];
+
+        const gardenFlowerColors = ['#c4869c'];
+
+        function gardenHasCollision(x, y, existingPositions, minDistance = 5) {
+            return existingPositions.some(pos => {
+                const dx = pos.x - x;
+                const dy = pos.y - y;
+                return Math.sqrt(dx * dx + dy * dy) < minDistance;
+            });
+        }
+
+        function gardenGeneratePosition(existingPositions, attempt = 0) {
+            const gardenEl = document.getElementById('garden-footer');
+            const containerWidth = gardenEl.getBoundingClientRect().width;
+            const horizontalPadding = 40;
+            const usableWidth = Math.max(0, containerWidth - horizontalPadding * 2);
+            const baseHeight = 80;
+
+            const totalPlants = gardenQuotes.length;
+            const currentIndex = existingPositions.length;
+
+            const segmentWidth = usableWidth / totalPlants;
+            const x = horizontalPadding + currentIndex * segmentWidth + segmentWidth / 2 - 40;
+            const y = baseHeight / 2;
+
+            return { x, y };
+        }
+
+        function gardenWrapText(text, maxLen) {
+            const words = text.split(' ');
+            const lines = [];
+            let current = '';
+
+            for (let word of words) {
+                if ((current + word).length <= maxLen) {
+                    current += (current ? ' ' : '') + word;
+                } else {
+                    if (current) lines.push(current);
+                    current = word;
+                }
+            }
+            if (current) lines.push(current);
+            return lines;
+        }
+
+        function gardenCreateFlower(text) {
+            const lines = gardenWrapText(text, 18);
+            let flower = '';
+
+            if (lines.length === 1) {
+                flower = `   (${gardenWrapInSpans(lines[0])})`;
+            } else if (lines.length === 2) {
+                flower = `  (${gardenWrapInSpans(lines[0])})\n  \\${gardenWrapInSpans(lines[1])}/`;
+            } else if (lines.length === 3) {
+                flower = `   (${gardenWrapInSpans(lines[0])})\n  /${gardenWrapInSpans(lines[1])}\\\n  \\${gardenWrapInSpans(lines[2])}/`;
+            } else {
+                flower = `   (${gardenWrapInSpans(lines[0])})\n`;
+                for (let i = 1; i < lines.length - 1; i++) {
+                    flower += `  ${i % 2 === 1 ? '/' : '\\'}${gardenWrapInSpans(lines[i])}${i % 2 === 1 ? '\\' : '/'}\n`;
+                }
+                flower += `   \\${gardenWrapInSpans(lines[lines.length - 1])}/`;
+            }
+
+            return flower;
+        }
+
+        function gardenWrapInSpans(text) {
+            return text.split('').map((char, i) =>
+                `<span style="transition-delay: ${i * 0.05}s">${char}</span>`
+            ).join('');
+        }
+
+        function gardenCreatePlant(quote, index) {
+            const plant = document.createElement('div');
+            plant.className = 'garden-plant';
+
+            const pos = gardenGeneratePosition(gardenPositions);
+            gardenPositions.push(pos);
+
+            plant.style.left = pos.x + 'px';
+            plant.style.top = pos.y + 'px';
+            plant.style.position = 'absolute';
+
+            const plantType = gardenBudTypes[index % gardenBudTypes.length];
+            const flowerColor = gardenFlowerColors[index % gardenFlowerColors.length];
+            const flowerText = gardenCreateFlower(quote);
+
+            plant.innerHTML = `<span class="flower" style="color: ${flowerColor}">${flowerText}</span><span class="bud">${plantType.bud}</span><span class="stem">${plantType.stem.join('\n')}</span>`;
+            plant.onclick = () => gardenWaterPlant(plant);
+
+            return plant;
+        }
+
+        const gardenContainer = document.getElementById('garden-footer');
+        const gardenPositions = [];
+        let gardenCursorX = 0;
+        let gardenCursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            gardenCursorX = e.clientX;
+            gardenCursorY = e.clientY;
+        });
+
+        function gardenWaterPlant(plant) {
+            if (plant.classList.contains('bloomed')) return;
+
+            // Hide all other flowers by removing bloomed class instantly
+            const allPlants = document.querySelectorAll('.garden-plant.bloomed');
+            allPlants.forEach(otherPlant => {
+                if (otherPlant !== plant) {
+                    // Disable transitions for instant hiding on all elements
+                    const elements = [otherPlant, ...otherPlant.querySelectorAll('*')];
+                    elements.forEach(el => el.style.transition = 'none');
+
+                    otherPlant.classList.remove('bloomed');
+
+                    // Force reflow to apply the change immediately
+                    otherPlant.offsetHeight;
+
+                    // Re-enable transitions for future interactions
+                    setTimeout(() => {
+                        elements.forEach(el => el.style.transition = '');
+                    }, 10);
+                }
+            });
+
+            const spoutX = gardenCursorX + 2;
+            const spoutY = gardenCursorY - 5;
+
+            for (let i = 0; i < 12; i++) {
+                setTimeout(() => {
+                    const spread = (Math.random() - 0.5) * 18;
+                    const gravity = Math.abs(spread) * 0.08;
+                    const x = spoutX + spread;
+                    const y = spoutY + gravity + Math.random() * 2;
+                    gardenCreateWaterDrop(x, y);
+                }, i * 30);
+            }
+
+            setTimeout(() => plant.classList.add('bloomed'), 1000);
+        }
+
+        function gardenCreateWaterDrop(x, y) {
+            const drop = document.createElement('div');
+            drop.className = 'garden-water-drop';
+            drop.textContent = '|';
+            drop.style.left = (x - 1) + 'px';
+            drop.style.top = y + 'px';
+            document.body.appendChild(drop);
+
+            setTimeout(() => drop.classList.add('active'), 10);
+            setTimeout(() => drop.remove(), 1100);
+        }
+
+        gardenQuotes.forEach((quote, index) => {
+            const plant = gardenCreatePlant(quote, index);
+            gardenContainer.appendChild(plant);
+        });
+
+        setTimeout(() => {
+            let maxHeight = 0;
+            const plants = gardenContainer.querySelectorAll('.garden-plant');
+            plants.forEach(plant => {
+                const plantBottom = parseInt(plant.style.top) + plant.offsetHeight;
+                maxHeight = Math.max(maxHeight, plantBottom);
+            });
+            gardenContainer.style.height = maxHeight + 'px';
+        }, 100);
+    </script>
     </body>
 </html>
