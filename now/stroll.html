@@ -28,18 +28,24 @@
             color: #aaa;
         }
 
+        .icon-sun {
+            text-align: left;
+            margin: 20px 0 50px 0;
+            font-size: 24px;
+            opacity: 0.6;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
-            gap: 30px;
-            margin-bottom: 20px;
+            gap: 45px;
+            margin-bottom: 40px;
         }
 
-        /* Minimal City Block */
         .city-block {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .city-name {
@@ -48,25 +54,25 @@
         }
 
         .time-row {
-            font-size: 18px;
-            line-height: 1.4;
+            font-size: 24px; /* Bigger focus since only one line */
+            line-height: 1.2;
         }
 
         .status {
             font-size: 13px;
             color: #888;
-            margin-top: 5px;
+            margin-top: 4px;
+            font-style: italic;
         }
 
         .status strong {
             color: #000;
-            font-weight: normal;
+            font-style: normal;
         }
 
         details {
             width: 100%;
             max-width: 500px;
-            margin-top: 32px;
         }
 
         summary {
@@ -77,166 +83,183 @@
         details pre {
             font-family: inherit;
             white-space: pre-wrap;
-            margin-top: 12px;
-            line-height: 1.6;
-            color: #222;
+            margin-top: 15px;
+            line-height: 1.5;
+            color: #333;
             text-align: justify;
         }
     </style>
 </head>
 <body>
 
+    <div id="date-display">...</div>
+
     <div class="content">
-        <div id="date-display">...</div>
-        <div style="text-align: left; margin: 40px 0; font-size: 24px; opacity: 0.6;">
-            𓂃 ོ☀︎𓂃
-        </div>
-        <div class="container">
+        <div class="icon-sun">𓂃 ོ☀︎𓂃</div>
         
-        <div class="city-block">
-            <span class="city-name">Mysore</span>
-            <div id="mys-times">
-                <div>--:-- am</div>
-                <div>--:-- pm</div>
+        <div class="container">
+            <!-- Mysore -->
+            <div class="city-block">
+                <span class="city-name">Mysore</span>
+                <div class="time-row" id="mys-time">--:--</div>
+                <div class="status" id="mys-status">...</div>
             </div>
-            <div class="status" id="mys-status">...</div>
-        </div>
 
-        <div class="city-block">
-            <span class="city-name">Bangalore</span>
-            <div id="blr-times">
-                <div>--:-- am</div>
-                <div>--:-- pm</div>
+            <!-- Bangalore -->
+            <div class="city-block">
+                <span class="city-name">Bangalore</span>
+                <div class="time-row" id="blr-time">--:--</div>
+                <div class="status" id="blr-status">...</div>
             </div>
-            <div class="status" id="blr-status">...</div>
-        </div>
-
         </div>
 
         <details>
-        <summary>science behind the golden hour</summary>
-        <pre>The "Golden Hour" is a geometric event.
+            <summary>science behind the golden hour</summary>
+            <pre>Golden hour is just sun hanging low. 
 
-It occurs specifically when the sun sits between -4° and +6° relative to the horizon.
+When it's about 0°–6° above the horizon, the light has to travel more. 
 
-At this low angle, sunlight travels through a thicker layer of atmosphere, scattering blue light and leaving only the warm reds and oranges.</pre>
-    </details>
+So it softens, warms up, and throws those long, dramatic colors everyone loves.</pre>
+        </details>
+    </div>
 
     <script>
-        // --- 1. CONFIG ---
         const CITIES = {
             mysore: { lat: 12.2958, lng: 76.6394 },
             bangalore: { lat: 12.9716, lng: 77.5946 }
         };
 
-        // --- 2. DATE ---
-        const d = new Date();
-        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        document.getElementById('date-display').textContent = 
-            `${d.getDate()} ${days[d.getDay()]} ${d.getFullYear()}`;
+        // --- TIMEZONE & DATE ---
+        function getISTDate() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            return new Date(utc + (3600000 * 5.5)); 
+        }
 
-        // --- 3. MATH (NOAA) ---
+        const d = getISTDate();
+        const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        document.getElementById('date-display').textContent =
+            `${days[d.getDay()]} ${months[d.getMonth()]} ${d.getFullYear()}`;
+
+        // --- MATH ---
         function toRad(deg) { return deg * (Math.PI / 180); }
         function toDeg(rad) { return rad * (180 / Math.PI); }
 
-        function getSunData(lat, lng) {
-            const now = new Date();
-            const start = new Date(now.getFullYear(), 0, 0);
-            const diff = now - start;
+        function calculateSunTimes(dateObj, lat, lng) {
+            const start = new Date(dateObj.getFullYear(), 0, 0);
+            const diff = dateObj - start;
             const oneDay = 1000 * 60 * 60 * 24;
             const N = Math.floor(diff / oneDay);
 
             const delta = 23.44 * Math.sin(toRad((360 / 365) * (N + 284)));
             const B = toRad((360 / 365) * (N - 81));
             const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
-            const solarNoon = 720 - (4 * lng) - eot;
+            const solarNoonUtc = 720 - (4 * lng) - eot;
 
             function getOffset(angle) {
                 const numer = Math.sin(toRad(angle)) - (Math.sin(toRad(lat)) * Math.sin(toRad(delta)));
                 const denom = Math.cos(toRad(lat)) * Math.cos(toRad(delta));
-                return toDeg(Math.acos(numer / denom)) * 4; 
+                const val = Math.max(-1, Math.min(1, numer / denom));
+                return toDeg(Math.acos(val)) * 4; 
             }
 
-            const deep = getOffset(-4);
-            const bright = getOffset(6);
+            const offLow = getOffset(0); 
+            const offHigh = getOffset(6);
 
-            function minsToDate(mins) {
-                const d = new Date();
-                d.setUTCHours(0,0,0,0);
-                d.setUTCMinutes(mins);
-                return d;
+            function utcMinsToISTDate(mins) {
+                const result = new Date(dateObj); 
+                result.setHours(0,0,0,0); 
+                result.setMinutes(mins + 330);
+                return result;
             }
 
             return {
-                m_start: minsToDate(solarNoon - deep),
-                m_end: minsToDate(solarNoon - bright),
-                e_start: minsToDate(solarNoon + bright),
-                e_end: minsToDate(solarNoon + deep)
+                m_start: utcMinsToISTDate(solarNoonUtc - offLow),
+                m_end: utcMinsToISTDate(solarNoonUtc - offHigh),
+                e_start: utcMinsToISTDate(solarNoonUtc + offHigh),
+                e_end: utcMinsToISTDate(solarNoonUtc + offLow)
             };
         }
 
-        // --- 4. FORMATTING ---
-        function fmt(d) {
-            let h = d.getHours();
-            let m = d.getMinutes();
+        function fmt(dateObj) {
+            let h = dateObj.getHours();
+            let m = dateObj.getMinutes();
             let ampm = h >= 12 ? 'pm' : 'am';
             h = h % 12 || 12;
             m = m < 10 ? '0'+m : m;
-            return `${h}:${m} ${ampm}`;
+            return `${h}:${m}${ampm}`;
         }
 
-        function getStatus(times) {
-            const now = new Date();
-            const windows = [
-                { name: "Morning", start: times.m_start, end: times.m_end },
-                { name: "Evening", start: times.e_start, end: times.e_end }
-            ];
-
-            // Check Active
-            for(let w of windows) {
-                if(now >= w.start && now <= w.end) return `Active now`;
+        // --- LOGIC: Select Single Window ---
+        function getUpcomingWindow(now, lat, lng) {
+            const todayTimes = calculateSunTimes(now, lat, lng);
+            
+            // 1. Is it currently Morning Golden Hour or Before?
+            if (now <= todayTimes.m_end) {
+                return { 
+                    label: "Morning", 
+                    start: todayTimes.m_start, 
+                    end: todayTimes.m_end,
+                    isTomorrow: false
+                };
             }
 
-            // Check Next
-            for(let w of windows) {
-                if(now < w.start) {
-                    const diff = w.start - now;
-                    const h = Math.floor(diff / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000);
-                    if(h === 0) return `${m} mins to go`;
-                    return `${h}h ${m}m to go`;
-                }
+            // 2. Is it currently Evening Golden Hour or Before?
+            if (now <= todayTimes.e_end) {
+                return { 
+                    label: "Evening", 
+                    start: todayTimes.e_start, 
+                    end: todayTimes.e_end,
+                    isTomorrow: false
+                };
             }
-            return `Done for today`;
+
+            // 3. Evening passed? Get Tomorrow Morning.
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tmrwTimes = calculateSunTimes(tomorrow, lat, lng);
+            
+            return { 
+                label: "Morning", 
+                start: tmrwTimes.m_start, 
+                end: tmrwTimes.m_end,
+                isTomorrow: true
+            };
         }
 
-        // --- 5. RENDER ---
-        function render(prefix, lat, lng) {
-            const data = getSunData(lat, lng);
-            const now = new Date();
+        function getStatus(now, win) {
+            // Check if active
+            if (now >= win.start && now <= win.end) return `Take a stroll`;
 
-            // Times - only show future/present golden hours
-            let morningHtml = '';
-            let eveningHtml = '';
+            // Countdown
+            if (now < win.start) {
+                const diff = win.start - now;
+                const hrs = Math.floor(diff / 3600000);
+                const mins = Math.floor((diff % 3600000) / 60000);
+                
+                let timeStr = "";
+                if (hrs === 0) timeStr = `${mins} mins`;
+                else timeStr = `${hrs}h ${mins}m`;
 
-            if (now <= data.m_end) {
-                morningHtml = `<div class="time-row">${fmt(data.m_start)} – ${fmt(data.m_end)}</div>`;
+                return win.isTomorrow ? `Tomorrow in ${timeStr}` : `In ${timeStr}`;
             }
+            return "";
+        }
 
-            if (now <= data.e_end) {
-                eveningHtml = `<div class="time-row">${fmt(data.e_start)} – ${fmt(data.e_end)}</div>`;
-            }
+        // --- RENDER ---
+        function renderCity(prefix, lat, lng) {
+            const now = getISTDate();
+            const win = getUpcomingWindow(now, lat, lng);
+            const status = getStatus(now, win);
 
-            const html = morningHtml + eveningHtml;
-            document.getElementById(`${prefix}-times`).innerHTML = html;
-
-            // Status
-            document.getElementById(`${prefix}-status`).innerHTML = getStatus(data);
+            document.getElementById(`${prefix}-time`).innerText = `${fmt(win.start)} - ${fmt(win.end)}`;
+            document.getElementById(`${prefix}-status`).innerHTML = status;
         }
 
         function update() {
-            render('mys', CITIES.mysore.lat, CITIES.mysore.lng);
-            render('blr', CITIES.bangalore.lat, CITIES.bangalore.lng);
+            renderCity('mys', CITIES.mysore.lat, CITIES.mysore.lng);
+            renderCity('blr', CITIES.bangalore.lat, CITIES.bangalore.lng);
         }
 
         update();
