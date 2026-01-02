@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>stroll</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #fff;
+            color: #000;
+            margin: 0;
+            padding: 20px;
+            text-align: left;
+        }
+
+        .content {
+            max-width: 300px;
+            margin: 40px auto;
+        }
+
+        #date-display {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            font-size: 13px;
+            font-style: italic;
+            color: #aaa;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        /* Minimal City Block */
+        .city-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .city-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .time-row {
+            font-size: 18px;
+            line-height: 1.4;
+        }
+
+        .status {
+            font-size: 13px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .status strong {
+            color: #000;
+            font-weight: normal;
+        }
+
+        details {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 32px;
+        }
+
+        summary {
+            font-weight: normal;
+            text-align: left;
+        }
+
+        details pre {
+            font-family: inherit;
+            white-space: pre-wrap;
+            margin-top: 12px;
+            line-height: 1.6;
+            color: #222;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content">
+        <div id="date-display">...</div>
+        <div style="text-align: left; margin: 40px 0; font-size: 24px; opacity: 0.6;">
+            𓂃 ོ☀︎𓂃
+        </div>
+        <div class="container">
+        
+        <div class="city-block">
+            <span class="city-name">Mysore</span>
+            <div id="mys-times">
+                <div>--:-- am</div>
+                <div>--:-- pm</div>
+            </div>
+            <div class="status" id="mys-status">...</div>
+        </div>
+
+        <div class="city-block">
+            <span class="city-name">Bangalore</span>
+            <div id="blr-times">
+                <div>--:-- am</div>
+                <div>--:-- pm</div>
+            </div>
+            <div class="status" id="blr-status">...</div>
+        </div>
+
+        </div>
+
+        <details>
+        <summary>science behind the golden hour</summary>
+        <pre>The "Golden Hour" is a geometric event.
+
+It occurs specifically when the sun sits between -4° and +6° relative to the horizon.
+
+At this low angle, sunlight travels through a thicker layer of atmosphere, scattering blue light and leaving only the warm reds and oranges.</pre>
+    </details>
+
+    <script>
+        // --- 1. CONFIG ---
+        const CITIES = {
+            mysore: { lat: 12.2958, lng: 76.6394 },
+            bangalore: { lat: 12.9716, lng: 77.5946 }
+        };
+
+        // --- 2. DATE ---
+        const d = new Date();
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        document.getElementById('date-display').textContent = 
+            `${d.getDate()} ${days[d.getDay()]} ${d.getFullYear()}`;
+
+        // --- 3. MATH (NOAA) ---
+        function toRad(deg) { return deg * (Math.PI / 180); }
+        function toDeg(rad) { return rad * (180 / Math.PI); }
+
+        function getSunData(lat, lng) {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = now - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const N = Math.floor(diff / oneDay);
+
+            const delta = 23.44 * Math.sin(toRad((360 / 365) * (N + 284)));
+            const B = toRad((360 / 365) * (N - 81));
+            const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+            const solarNoon = 720 - (4 * lng) - eot;
+
+            function getOffset(angle) {
+                const numer = Math.sin(toRad(angle)) - (Math.sin(toRad(lat)) * Math.sin(toRad(delta)));
+                const denom = Math.cos(toRad(lat)) * Math.cos(toRad(delta));
+                return toDeg(Math.acos(numer / denom)) * 4; 
+            }
+
+            const deep = getOffset(-4);
+            const bright = getOffset(6);
+
+            function minsToDate(mins) {
+                const d = new Date();
+                d.setUTCHours(0,0,0,0);
+                d.setUTCMinutes(mins);
+                return d;
+            }
+
+            return {
+                m_start: minsToDate(solarNoon - deep),
+                m_end: minsToDate(solarNoon - bright),
+                e_start: minsToDate(solarNoon + bright),
+                e_end: minsToDate(solarNoon + deep)
+            };
+        }
+
+        // --- 4. FORMATTING ---
+        function fmt(d) {
+            let h = d.getHours();
+            let m = d.getMinutes();
+            let ampm = h >= 12 ? 'pm' : 'am';
+            h = h % 12 || 12;
+            m = m < 10 ? '0'+m : m;
+            return `${h}:${m} ${ampm}`;
+        }
+
+        function getStatus(times) {
+            const now = new Date();
+            const windows = [
+                { name: "Morning", start: times.m_start, end: times.m_end },
+                { name: "Evening", start: times.e_start, end: times.e_end }
+            ];
+
+            // Check Active
+            for(let w of windows) {
+                if(now >= w.start && now <= w.end) return `Active now`;
+            }
+
+            // Check Next
+            for(let w of windows) {
+                if(now < w.start) {
+                    const diff = w.start - now;
+                    const h = Math.floor(diff / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000);
+                    if(h === 0) return `${m} mins to go`;
+                    return `${h}h ${m}m to go`;
+                }
+            }
+            return `Done for today`;
+        }
+
+        // --- 5. RENDER ---
+        function render(prefix, lat, lng) {
+            const data = getSunData(lat, lng);
+            const now = new Date();
+
+            // Times - only show future/present golden hours
+            let morningHtml = '';
+            let eveningHtml = '';
+
+            if (now <= data.m_end) {
+                morningHtml = `<div class="time-row">${fmt(data.m_start)} – ${fmt(data.m_end)}</div>`;
+            }
+
+            if (now <= data.e_end) {
+                eveningHtml = `<div class="time-row">${fmt(data.e_start)} – ${fmt(data.e_end)}</div>`;
+            }
+
+            const html = morningHtml + eveningHtml;
+            document.getElementById(`${prefix}-times`).innerHTML = html;
+
+            // Status
+            document.getElementById(`${prefix}-status`).innerHTML = getStatus(data);
+        }
+
+        function update() {
+            render('mys', CITIES.mysore.lat, CITIES.mysore.lng);
+            render('blr', CITIES.bangalore.lat, CITIES.bangalore.lng);
+        }
+
+        update();
+        setInterval(update, 60000);
+
+    </script>
+</body>
+</html>
