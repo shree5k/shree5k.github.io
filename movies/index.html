@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>movies</title>
+    <style>
+        body {
+            background-color: #F5F5F5;
+            font-family: "Verdana", sans-serif;
+            margin: 0;
+            padding: 40px 100px;
+        }
+
+        .title-container {
+            position: relative;
+            text-align: center;
+            margin-bottom: 48px;
+            height: 80px;
+        }
+
+        .background-text {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #dddcdc;
+            font-size: 42px;
+            font-family: 'Zapfino', 'Mistral', 'Vladimir Script', 'French Script MT', 'Kunstler Script', cursive;
+            font-weight: 100;
+            letter-spacing: -2px;
+            z-index: 1;
+            opacity: 0.7;
+        }
+
+        .empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #dddcdc;
+            font-size: 24px;
+            font-family: 'Zapfino', 'Mistral', 'Vladimir Script', 'French Script MT', 'Kunstler Script', cursive;
+            font-weight: 100;
+            letter-spacing: -2px;
+            opacity: 0.7;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .foreground-text {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #333;
+            font-size: 20px;
+            font-family: 'Times New Roman', serif;
+            letter-spacing: 6px;
+            font-weight: 400;
+            z-index: 2;
+            text-transform: uppercase;
+        }
+
+
+        #collection {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .entry {
+            width: 180px;
+            text-align: center;
+            opacity: 0; 
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .disc-body {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            position: relative;
+            background-color: #ccc;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #bbb;
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.3),
+                0 0 10px rgba(0,0,0,0.1),
+                inset 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+
+        .disc-body::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            background: repeating-radial-gradient(
+                circle at center, transparent 0px, transparent 2px,
+                rgba(255,255,255,0.02) 2px, rgba(255,255,255,0.02) 4px
+            );
+            pointer-events: none; z-index: 1;
+        }
+
+
+        .disc-hole {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 25px; height: 25px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            box-shadow:
+                inset 0 1px 2px rgba(255,255,255,0.8),
+                0 1px 3px rgba(0,0,0,0.3),
+                0 0 0 1px rgba(0,0,0,0.1);
+            z-index: 3;
+        }
+
+        .disc-shine {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%; z-index: 4; pointer-events: none;
+            background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.7) 50%, transparent 60%);
+            opacity: 0.8; mix-blend-mode: overlay;
+        }
+
+        .info {
+            margin-top: 15px;
+            color: #333;
+            display: none;
+        }
+        .info-title { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
+        .info-date { font-size: 11px; color: #777; font-family: monospace; }
+
+
+        .tooltip {
+            position: fixed;
+            background: #ffffe0;
+            color: #000;
+            padding: 4px 8px;
+            border: 1px solid #000;
+            border-radius: 0;
+            font-size: 12px;
+            font-family: sans-serif;
+            white-space: nowrap;
+            z-index: 10000;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -100%);
+            transition: opacity 0.15s ease;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            max-width: 250px;
+            text-align: left;
+            line-height: 1.2;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+
+        @media (max-width: 768px) {
+            .info {
+                display: block;
+            }
+        }
+        
+        #loading { text-align: center; font-family: monospace; color: #666; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <div class="title-container">
+        <h1 class="background-text">archive</h1>
+        <h1 class="foreground-text">movies</h1>
+    </div>
+    <div id="loading">Reading Disc Data...</div>
+    <div id="collection"></div>
+    <div id="emptyState" class="empty-state" style="display:none;">
+        book that tickets, dwag -.-
+    </div>
+
+    <select id="yearFilter" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    ">
+        <option value="all">All time</option>
+    </select>
+
+    <script>
+        const username = "shree0";
+        const defaultYearFilter = "2026"; // Set to "all" or a specific year (e.g., 2024)
+
+        const rssUrl = `https://letterboxd.com/${username}/rss/`;
+        const cacheBust = Date.now() + Math.random();
+        const proxyUrl = `https://letterboxd-proxy.shreeramk-designs.workers.dev/?url=${encodeURIComponent(rssUrl)}`;
+        const shelf = document.getElementById('collection');
+        const loading = document.getElementById('loading');
+
+        const getMonthIndex = (mon) => {
+           return new Date(Date.parse(mon + " 1, 2012")).getMonth();
+        };
+        const WATCHED_REGEX = /Watched on \w+\s+(\w+)\s+(\d+),\s+(\d+)/;
+
+        function parseItem(item) {
+          const titleRaw = item.querySelector("title")?.textContent || "";
+          const description = item.querySelector("description")?.textContent || "";
+          const pubDateText = item.querySelector("pubDate")?.textContent || "";
+          const pubDate = new Date(pubDateText);
+
+          const match = description.match(WATCHED_REGEX);
+
+          let watchedDate = pubDate;
+          let watchedYear = pubDate.getFullYear();
+          let displayDate = pubDate.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+          });
+
+          if (match) {
+            const monthStr = match[1];
+            const day = Number(match[2]);
+            const year = Number(match[3]);
+            watchedDate = new Date(year, getMonthIndex(monthStr), day);
+            watchedYear = year;
+            displayDate = `${monthStr.slice(0, 3).toUpperCase()} ${day}, ${year}`;
+          }
+
+          const imgMatch = description.match(/src="([^"]+)"/);
+          const posterUrl = imgMatch ? imgMatch[1] : "";
+
+          return {
+            title: titleRaw.split(",")[0],
+            posterUrl,
+            watchedDate,
+            watchedYear,
+            displayDate,
+            description
+          };
+        }
+
+        function renderItems(items) {
+          shelf.innerHTML = "";
+
+          const emptyState = document.getElementById("emptyState");
+
+          if (!items.length) {
+            emptyState.style.display = "block";
+            return;
+          }
+
+          emptyState.style.display = "none";
+
+          items.forEach(item => {
+            const html = `
+              <div class="entry">
+                <div class="disc-body"
+                  style="background-image: url('${item.posterUrl}');"
+                  data-tooltip="${item.title} - ${item.displayDate}">
+                  <div class="disc-shine"></div>
+                  <div class="disc-hole"></div>
+                </div>
+                <div class="info">
+                  <div class="info-title">${item.title}</div>
+                  <div class="info-date">${item.displayDate}</div>
+                </div>
+              </div>
+            `;
+            shelf.innerHTML += html;
+          });
+        }
+
+        let allItems = [];
+
+        fetch(proxyUrl)
+          .then(res => res.text())
+          .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+          .then(xml => {
+            allItems = Array.from(xml.querySelectorAll("item"))
+              .map(parseItem)
+              .sort((a, b) => b.watchedDate - a.watchedDate);
+
+            loading.style.display = "none";
+
+            const years = [...new Set(allItems.map(i => i.watchedYear))];
+            if (defaultYearFilter !== "all" && !years.includes(Number(defaultYearFilter))) {
+              years.push(Number(defaultYearFilter));
+            }
+            years.sort((a, b) => b - a);
+
+            const yearFilter = document.getElementById("yearFilter");
+
+            years.forEach(year => {
+              const count = allItems.filter(
+                item => item.watchedYear === Number(year)
+              ).length;
+
+              const option = document.createElement("option");
+              option.value = year;
+              option.textContent = `${year} [${count}]`;
+
+              if (year == defaultYearFilter) {
+                option.selected = true;
+              }
+
+              yearFilter.appendChild(option);
+            });
+
+            const initialItems = defaultYearFilter === "all"
+              ? allItems
+              : allItems.filter(item => item.watchedYear == defaultYearFilter);
+
+            renderItems(initialItems);
+          })
+          .catch(err => {
+            console.error(err);
+            loading.innerText = "Failed to load.";
+          });
+
+        document.getElementById("yearFilter").addEventListener("change", e => {
+          const selectedYear = e.target.value;
+          const items =
+            selectedYear === "all"
+              ? allItems
+              : allItems.filter(item => item.watchedYear === Number(selectedYear));
+
+          renderItems(items);
+        });
+
+        let tooltipElement = null;
+        let tooltipTimeout = null;
+
+        function createTooltip() {
+            if (!tooltipElement) {
+                tooltipElement = document.createElement('div');
+                tooltipElement.className = 'tooltip';
+                document.body.appendChild(tooltipElement);
+            }
+            return tooltipElement;
+        }
+
+        function showTooltip(text, x, y) {
+            const tooltip = createTooltip();
+            tooltip.textContent = text;
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = y + 'px';
+            tooltip.classList.add('show');
+
+            if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+            }
+        }
+
+        function hideTooltip() {
+            if (tooltipElement) {
+                tooltipElement.classList.remove('show');
+                tooltipTimeout = setTimeout(() => {
+                    if (tooltipElement) {
+                        tooltipElement.classList.remove('show');
+                    }
+                }, 100);
+            }
+        }
+
+        document.addEventListener('mouseenter', function(e) {
+            if (e.target && e.target.classList && e.target.classList.contains('disc-body')) {
+                const tooltipText = e.target.getAttribute('data-tooltip');
+                if (tooltipText) {
+                    const rect = e.target.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const topY = rect.top - 8;
+                    showTooltip(tooltipText, centerX, topY);
+                }
+            }
+        }, true);
+
+        document.addEventListener('mouseleave', function(e) {
+            if (e.target && e.target.classList && e.target.classList.contains('disc-body')) {
+                hideTooltip();
+            }
+        }, true);
+
+    </script>
+
+</body>
+</html>
