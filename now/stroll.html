@@ -88,6 +88,13 @@
             color: #333;
             text-align: justify;
         }
+        .full-moon {
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+            color: grey;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +103,7 @@
 
     <div class="content">
         <div class="icon-sun">𓂃 ོ☀︎𓂃</div>
-        
+        <div id="moon-display" class="full-moon"></div>
         <div class="container">
             <!-- Mysore -->
             <div class="city-block">
@@ -133,7 +140,20 @@ So it softens, warms up, and throws those long, dramatic colors everyone loves.<
         function getISTDate() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            return new Date(utc + (3600000 * 5.5)); 
+            return new Date(utc + (3600000 * 5.5));
+        }
+
+        // --- FULL MOON CALCULATION ---
+        function isFullMoon(date) {
+            const referenceFullMoon = new Date(2025, 0, 14);
+            const lunarCycle = 29.53 * 24 * 60 * 60 * 1000;
+
+            const diff = date - referenceFullMoon;
+            const cycles = Math.round(diff / lunarCycle);
+            const calculatedFullMoon = new Date(referenceFullMoon.getTime() + cycles * lunarCycle);
+
+            const dayDiff = Math.abs(date - calculatedFullMoon) / (24 * 60 * 60 * 1000);
+            return dayDiff <= 1;
         }
 
         const d = getISTDate();
@@ -142,7 +162,10 @@ So it softens, warms up, and throws those long, dramatic colors everyone loves.<
         document.getElementById('date-display').textContent =
             `${days[d.getDay()]} ${months[d.getMonth()]} ${d.getFullYear()}`;
 
-        // --- MATH ---
+        if (isFullMoon(d)) {
+            document.getElementById('moon-display').innerHTML = '𓇸 Full Moon Tonight 𓇸';
+        }
+
         function toRad(deg) { return deg * (Math.PI / 180); }
         function toDeg(rad) { return rad * (180 / Math.PI); }
 
@@ -191,7 +214,6 @@ So it softens, warms up, and throws those long, dramatic colors everyone loves.<
             return `${h}:${m}${ampm}`;
         }
 
-        // --- LOGIC: Select Single Window ---
         function getUpcomingWindow(now, lat, lng) {
             const todayTimes = calculateSunTimes(now, lat, lng);
             
