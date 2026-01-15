@@ -83,6 +83,10 @@ body {
     border-radius: 8px;
 }
 
+.grid-item:hover img {
+    cursor: zoom-in;
+}
+
 .bottom-fade {
     position: fixed;
     bottom: 0;
