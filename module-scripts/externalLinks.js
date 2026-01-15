@@ -16,7 +16,8 @@ export async function setupExternalLinks(setupHoverEffect) {
         data.externalLinks.forEach(link => {
             const linkElement = document.createElement('a');
             linkElement.href = link.link;
-            linkElement.target = '_blank';
+            const shouldOpenInNewTab = link.openInNewTab ?? true;
+            linkElement.target = shouldOpenInNewTab ? '_blank' : '_self';
             linkElement.className = 'topic-item hover-effect animated-item';
             linkElement.textContent = link.name;
 

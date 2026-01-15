@@ -69,6 +69,7 @@
         {
             "name": "Layers",
             "link": "/layers",
+            "openInNewTab": false,
             "images": ["assets/work/work-1.png", "assets/work/work-2.png", "assets/work/work-3.png"]
         },
         {
