@@ -76,14 +76,16 @@ body {
     cursor: pointer;
 }
 
-.grid-item img {
+.grid-item img,
+.grid-item video {
     width: 100%;
     height: auto;
     display: block;
     border-radius: 2px;
 }
 
-.grid-item:hover img {
+.grid-item:hover img,
+.grid-item:hover video {
     cursor: zoom-in;
 }
 
@@ -131,7 +133,8 @@ body.lightbox-open {
     overflow: hidden;
 }
 
-.lightbox img {
+.lightbox img,
+.lightbox video {
     max-width: 90%;
     max-height: 90vh;
     object-fit: contain;
@@ -141,7 +144,8 @@ body.lightbox-open {
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.lightbox.active img {
+.lightbox.active img,
+.lightbox.active video {
     opacity: 1;
     transform: scale(1);
 }

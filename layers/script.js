@@ -1,5 +1,5 @@
 const images = [
-    '16', '15', '14', '13', '12', '11', '10', '09', '08',
+    '16', '15', '14', '13', 'sorus.mp4', '12', '11', '10', 'rupeek.gif', '09', '08',
     '07', '06', '05', '04', '03', '02', '01'
 ];
 
@@ -16,18 +16,83 @@ const loadImage = (imageName, index) => {
         item.className = 'grid-item';
         item.dataset.index = index;
         
-        const picture = document.createElement('picture');
-        const source = document.createElement('source');
-        source.srcset = `assets/${imageName}.avif`;
-        source.type = 'image/avif';
+        // Check if it's a video file
+        const isVideo = imageName.endsWith('.mp4');
+        // Check if the image name already has an extension (like .gif)
+        const hasExtension = imageName.includes('.');
         
-        const img = document.createElement('img');
-        img.src = `assets/${imageName}.webp`;
-        img.alt = `${index + 1}`;
-        
-        picture.appendChild(source);
-        picture.appendChild(img);
-        item.appendChild(picture);
+        if (isVideo) {
+            // Create video element for MP4
+            const video = document.createElement('video');
+            video.src = `assets/${imageName}`;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+            video.setAttribute('playsinline', '');
+            
+            item.appendChild(video);
+            
+            video.onloadeddata = () => {
+                resolve({
+                    element: item,
+                    height: video.videoHeight,
+                    index: index
+                });
+            };
+            
+            video.onerror = () => {
+                console.warn(`Failed to load video: ${imageName}`);
+                item.style.display = 'none';
+                resolve({
+                    element: item,
+                    height: 0,
+                    index: index
+                });
+            };
+        } else {
+            const picture = document.createElement('picture');
+            const img = document.createElement('img');
+            img.alt = `${index + 1}`;
+            
+            if (hasExtension) {
+                // Use the specified format directly, no fallback
+                img.src = `assets/${imageName}`;
+                picture.appendChild(img);
+            } else {
+                // Default behavior: AVIF source with WebP fallback
+                const source = document.createElement('source');
+                source.srcset = `assets/${imageName}.avif`;
+                source.type = 'image/avif';
+                img.src = `assets/${imageName}.webp`;
+                picture.appendChild(source);
+                picture.appendChild(img);
+            }
+            
+            item.appendChild(picture);
+            
+            img.onload = () => {
+                resolve({
+                    element: item,
+                    height: img.naturalHeight,
+                    index: index
+                });
+            };
+
+            img.onerror = () => {
+                console.warn(`Failed to load image: ${imageName}`);
+                if (!hasExtension && img.src.includes('.webp')) {
+                    img.src = `assets/${imageName}.avif`;
+                } else {
+                    item.style.display = 'none';
+                    resolve({
+                        element: item,
+                        height: 0,
+                        index: index
+                    });
+                }
+            };
+        }
         
         // Click handler (only on desktop)
         item.addEventListener('click', () => {
@@ -36,43 +101,57 @@ const loadImage = (imageName, index) => {
                 showLightbox();
             }
         });
-        
-        img.onload = () => {
-            resolve({
-                element: item,
-                height: img.naturalHeight,
-                index: index
-            });
-        };
-
-        img.onerror = () => {
-            console.warn(`Failed to load image: ${imageName}`);
-            if (img.src.includes('.webp')) {
-                img.src = `assets/${imageName}.avif`;
-            } else {
-                item.style.display = 'none';
-                resolve({
-                    element: item,
-                    height: 0,
-                    index: index
-                });
-            }
-        };
     });
 };
 
 const showLightbox = () => {
     const imageName = images[currentIndex];
-    // Try AVIF first, fallback to WebP
-    lightboxImg.src = `assets/${imageName}.avif`;
-    lightboxImg.onerror = () => {
-        lightboxImg.src = `assets/${imageName}.webp`;
-    };
+    const isVideo = imageName.endsWith('.mp4');
+    const hasExtension = imageName.includes('.');
+    
+    // Remove any existing lightbox video
+    const existingVideo = lightbox.querySelector('video');
+    if (existingVideo) {
+        existingVideo.remove();
+    }
+    
+    if (isVideo) {
+        // Hide image, show video
+        lightboxImg.style.display = 'none';
+        const video = document.createElement('video');
+        video.src = `assets/${imageName}`;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.id = 'lightbox-video';
+        lightbox.appendChild(video);
+    } else {
+        // Show image, ensure video styling is reset
+        lightboxImg.style.display = '';
+        if (hasExtension) {
+            // Use the specified format directly
+            lightboxImg.src = `assets/${imageName}`;
+        } else {
+            // Try AVIF first, fallback to WebP
+            lightboxImg.src = `assets/${imageName}.avif`;
+            lightboxImg.onerror = () => {
+                lightboxImg.src = `assets/${imageName}.webp`;
+            };
+        }
+    }
     lightbox.classList.add('active');
     document.body.classList.add('lightbox-open');
 };
 
 const closeLightbox = () => {
+    // Remove any lightbox video
+    const video = lightbox.querySelector('video');
+    if (video) {
+        video.pause();
+        video.remove();
+    }
     lightbox.classList.remove('active');
     document.body.classList.remove('lightbox-open');
 };
