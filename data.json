@@ -17,6 +17,14 @@
             "images": ["assets/plugins/Web Lab.png"]
         },
         {
+            "name": "App Lab",
+            "description": "Engineering surprises",
+            "link": "https://shreeramk.com/app-lab/",
+            "tag_id": "260213",
+            "openInNewTab": true,
+            "images": ["assets/plugins/App Lab.png"]
+        },
+        {
             "name": "Designer Excuses - Raycast",
             "description": "Extension that generates witty and playful excuses",
             "link": "https://www.raycast.com/shreeram/designer-excuses",
