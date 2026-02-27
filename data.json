@@ -76,11 +76,11 @@
     "layersGallery": {
         "link": "/visuals",
         "images": [
-            "/assets/visuals/01.webp",
-            "/assets/visuals/02.webp",
-            "/assets/visuals/03.webp",
-            "/assets/visuals/04.webp",
-            "/assets/visuals/05.webp"
+            "/assets/visuals/01.png",
+            "/assets/visuals/02.png",
+            "/assets/visuals/03.png",
+            "/assets/visuals/04.png",
+            "/assets/visuals/05.png"
         ]
     },
     "externalLinks": [
