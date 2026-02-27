@@ -8,12 +8,23 @@
     <link rel="apple-touch-icon" href="assets/logo.png">
 
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/blurPageLoader.css">
+    <style>
+        body {
+            animation: pageLoad 0.35s cubic-bezier(0.4, 0, 0.2, 1.2) forwards;
+        }
+        @keyframes pageLoad {
+            0% { filter: blur(24px); opacity: 0; }
+            25% { filter: blur(18px); opacity: 0.2; }
+            50% { filter: blur(12px); opacity: 0.4; }
+            75% { filter: blur(6px); opacity: 0.8; }
+            90% { filter: blur(3px); opacity: 0.9; }
+            100% { filter: blur(0); opacity: 1; }
+        }
+    </style>
 
     <link rel="preload" as="image" href="assets/logo.png">
     <link rel="preload" href="css/styles.css" as="style">
     <link rel="preload" href="data.json" as="fetch" crossorigin>
-    <link rel="preload" href="/module-views/introContainer.html" as="fetch" crossorigin>
     
     <meta property="og:type" content="website">
     <meta property="og:title" content="Shreeram K">
@@ -32,6 +43,7 @@
     <meta property="twitter:description" content="Designer (who codes sometimes)">
     <meta property="twitter:image" content="https://shree5k.github.io/assets/og.png">
     
+    <link rel="preconnect" href="https://www.googletagmanager.com">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LHV4PC8ED5"></script>
     <script>
@@ -41,11 +53,32 @@
         gtag('config', 'G-LHV4PC8ED5');
     </script>
 
-    <script src="script.js" type="module" defer></script>
+    <script src="script.js" type="module"></script>
 </head>
 <body>
     <div id="main-container">
-        <div id="intro-placeholder"></div>
+        <div class="intro-container animated-item">
+            <div class="intro-header">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/logo.png" alt="shreeram logo" class="intro-logo">
+                </a>
+                <div class="intro-content">
+                    <h1 id="section-title">Shreeram K</h1>
+                    <div class="subtitle-container">
+                        <p class="subtitle">runnin' wild on design canvas <span class="outdoor-text">
+                            <span class="forest-container">
+                                <img src="assets/outdoors/flowers-1.svg" alt="Flowers" class="forest-svg">
+                                <img src="assets/outdoors/flowers-2.svg" alt="Flowers" class="forest-svg">                                
+                                <img src="assets/outdoors/flowers-3.svg" alt="Flowers" class="forest-svg">
+                                <img src="assets/outdoors/trees-1.svg" alt="Trees" class="forest-svg">
+                                <img src="assets/outdoors/trees-2.svg" alt="Trees" class="forest-svg">
+                            </span>
+                            (sometimes outdoors)
+                        </span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="section-container" style="padding-top: 1rem;">
             <div class="section-title-wrapper animated-item">
                 <h1 id="section-title">Work</h1>

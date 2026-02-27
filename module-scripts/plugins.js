@@ -31,6 +31,8 @@ function displayPlugins(data) {
         image.className = 'plugin-image';
         image.src = plugin.image;
         image.alt = plugin.name;
+        image.loading = 'lazy';
+        image.decoding = 'async';
 
         const textContainer = document.createElement('div');
         textContainer.className = 'plugin-text';
@@ -55,7 +57,7 @@ function displayPlugins(data) {
 
 async function loadPlugins() {
     try {
-        pluginsData = await fetchData('data.json');
+        pluginsData = await fetchData('/data.json');
         if (!pluginsData || !pluginsData.plugins || pluginsData.plugins.length === 0) {
             console.error('No plugins found in data');
             return;

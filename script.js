@@ -10,12 +10,6 @@ async function fetchData(url) {
     return await response.json();
 }
 
-async function fetchText(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Failed to load text from ${url}.`);
-    return await response.text();
-}
-
 function displayMessage(container, message) {
     container.innerHTML = `<div class="error-message">${message}</div>`;
 }
@@ -46,6 +40,8 @@ function renderProjects(data) {
                 imgElement.src = imgSrc;
                 imgElement.className = 'hover-image projects-hover-image-width';
                 imgElement.alt = `${repo.name} icon`;
+                imgElement.loading = 'lazy';
+                imgElement.decoding = 'async';
                 topicLink.appendChild(imgElement);
             });
         }
@@ -62,42 +58,28 @@ function renderProjects(data) {
     setupHoverEffect(projectsContainer);
 }
 
-async function fetchProjects() {
+document.addEventListener('DOMContentLoaded', async () => {
     projectsContainer = document.getElementById('projects-container');
 
     try {
         const data = await fetchData('data.json');
 
-        if (!data || !data.projects || data.projects.length === 0) {
+        if (data && data.projects && data.projects.length > 0) {
+            renderProjects(data);
+        } else {
             displayMessage(projectsContainer, 'No projects found.');
-            return;
         }
 
-        renderProjects(data);
+        setupExternalLinks(data, setupHoverEffect);
     } catch (error) {
         console.error('Error fetching data:', error);
         displayMessage(projectsContainer, error.message);
     }
-}
 
-async function loadIntroContainer() {
-    const introPlaceholder = document.getElementById('intro-placeholder');
-    try {
-        const introHTML = await fetchText('/module-views/introContainer.html');
-        introPlaceholder.innerHTML = introHTML;
-    } catch (error) {
-        console.error('Error loading intro container:', error);
-    }
-}
+    const bodyAnimationDuration = 350;
+    const delayBeforeStaggeredAnimation = bodyAnimationDuration + 50;
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const contentLoadingPromises = [
-        loadIntroContainer(),
-        fetchProjects(),
-        setupExternalLinks(setupHoverEffect)
-    ];
-
-    await Promise.all(contentLoadingPromises);
-
-    triggerStaggeredAnimation();
+    setTimeout(() => {
+        triggerStaggeredAnimation();
+    }, delayBeforeStaggeredAnimation);
 });

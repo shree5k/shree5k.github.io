@@ -3,10 +3,10 @@
         {
             "name": "Figma Plugins",
             "description": "Crafting tools to amplify design abilities",
-            "link": "plugins.html",
+            "link": "/plugins",
             "tag_id": "000001",
             "openInNewTab": false,
-            "images": ["assets/plugins/Soul Tokens Mapper.png", "assets/plugins/Soul Documentation Specs.png"]
+            "images": ["/assets/plugins/Soul Tokens Mapper.webp", "/assets/plugins/Soul Documentation Specs.webp"]
         },
         {
             "name": "Web Lab",
@@ -14,7 +14,7 @@
             "link": "https://shreeramk.com/web-lab/",
             "tag_id": "250424",
             "openInNewTab": true,
-            "images": ["assets/plugins/Web Lab.png"]
+            "images": ["/assets/plugins/Web Lab.webp"]
         },
         {
             "name": "App Lab",
@@ -22,7 +22,7 @@
             "link": "https://shreeramk.com/app-lab/",
             "tag_id": "260213",
             "openInNewTab": true,
-            "images": ["assets/plugins/App Lab.png"]
+            "images": ["/assets/plugins/App Lab.webp"]
         },
         {
             "name": "Designer Excuses - Raycast",
@@ -30,15 +30,15 @@
             "link": "https://www.raycast.com/shreeram/designer-excuses",
             "tag_id": "240228",
             "openInNewTab": true,
-            "images": ["assets/plugins/Raycast-1.png"]
+            "images": ["/assets/plugins/Raycast-1.webp"]
         },
         {
             "name": "Match & Watch",
-            "description": "Mashes your watchlist with a friend’s to help you finally agree on a movie",
+            "description": "Mashes your watchlist with a friend's to help you finally agree on a movie",
             "link": "https://matchand.watch/",
             "tag_id": "250507",
             "openInNewTab": true,
-            "images": ["assets/plugins/matchandwatch.png"]
+            "images": ["/assets/plugins/matchandwatch.webp"]
         }
     ],
     "plugins": [
@@ -46,54 +46,54 @@
             "name": "Soul Tokens Mapper",
             "description": "Maps matched design tokens",
             "link": "https://github.com/shree5k",
-            "image": "assets/plugins/Soul Tokens Mapper.png"
+            "image": "/assets/plugins/Soul Tokens Mapper.webp"
         },
         {
             "name": "Sorus",
             "description": "Powering all things Soul Design System at JioHotstar",
             "link": "https://github.com/shree5k",
-            "image": "assets/plugins/Sorus.png"
+            "image": "/assets/plugins/Sorus.webp"
         },
         {
             "name": "Oscar",
             "description": "Fills with latest posters, title cutouts, tags & descriptions",
             "link": "https://x.com/shree5k/status/1928428375007264913",
-            "image": "assets/plugins/Oscar.png"
+            "image": "/assets/plugins/Oscar.webp"
         },
         {
             "name": "Soul Documentation Specs",
             "description": "Automates and speeds up component specs creation",
             "link": "https://github.com/shree5k",
-            "image": "assets/plugins/Soul Documentation Specs.png"
+            "image": "/assets/plugins/Soul Documentation Specs.webp"
         },
         {
             "name": "Just Fill",
             "description": "Resizes images to fill width, preserving aspect ratio",
             "link": "https://www.figma.com/community/plugin/1505598858608143992/just-fill",
-            "image": "assets/plugins/Just Fill.png"
+            "image": "/assets/plugins/Just Fill.webp"
         }
     ],
     "externalLinks": [
         {
-            "name": "Layers",
+            "name": "Visual Craft",
             "link": "/layers",
             "openInNewTab": false,
-            "images": ["assets/work/work-1.png", "assets/work/work-2.png", "assets/work/work-3.png"]
+            "images": ["/assets/work/work-1.webp", "/assets/work/work-2.webp", "/assets/work/work-3.webp"]
         },
         {
-            "name": "Medium",
+            "name": "Writings",
             "link": "https://medium.com/@shreeramk",
-            "images": ["assets/work/medium-1.png", "assets/work/medium-2.png"]
+            "images": ["/assets/work/medium-1.webp", "/assets/work/medium-2.webp"]
         },
         {
             "name": "GitHub",
             "link": "https://github.com/shree5k",
-            "images": ["assets/work/github-2.png", "assets/work/github-1.png"]
+            "images": ["/assets/work/github-2.webp", "/assets/work/github-1.webp"]
         },
         {
             "name": "Twitter",
             "link": "https://x.com/shree5k",
-            "images": ["assets/work/twitter-1.png", "assets/work/twitter-2.png"]
+            "images": ["/assets/work/twitter-1.webp", "/assets/work/twitter-2.webp"]
         }
     ]
 }
