@@ -73,27 +73,36 @@
             "image": "/assets/plugins/Just Fill.webp"
         }
     ],
+    "layersGallery": {
+        "link": "/visuals",
+        "images": [
+            "/assets/visuals/01.webp",
+            "/assets/visuals/02.webp",
+            "/assets/visuals/03.webp",
+            "/assets/visuals/04.webp",
+            "/assets/visuals/05.webp"
+        ]
+    },
     "externalLinks": [
-        {
-            "name": "Visual Craft",
-            "link": "/layers",
-            "openInNewTab": false,
-            "images": ["/assets/work/work-1.webp", "/assets/work/work-2.webp", "/assets/work/work-3.webp"]
-        },
         {
             "name": "Writings",
             "link": "https://medium.com/@shreeramk",
-            "images": ["/assets/work/medium-1.webp", "/assets/work/medium-2.webp"]
+            "images": []
         },
         {
             "name": "GitHub",
             "link": "https://github.com/shree5k",
-            "images": ["/assets/work/github-2.webp", "/assets/work/github-1.webp"]
+            "images": []
         },
         {
             "name": "Twitter",
             "link": "https://x.com/shree5k",
-            "images": ["/assets/work/twitter-1.webp", "/assets/work/twitter-2.webp"]
+            "images": []
+        },
+        {
+            "name": "Email",
+            "link": "mailto:shreeramk.designs@gmail.com",
+            "images": []
         }
     ]
 }

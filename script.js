@@ -14,6 +14,25 @@ function displayMessage(container, message) {
     container.innerHTML = `<div class="error-message">${message}</div>`;
 }
 
+function renderLayersGallery(data) {
+    const gallery = document.getElementById('layers-gallery');
+    if (!gallery || !data.layersGallery) return;
+
+    const link = document.createElement('a');
+    link.href = data.layersGallery.link;
+    link.className = 'layers-gallery-link';
+
+    data.layersGallery.images.forEach((imgSrc) => {
+        const img = document.createElement('img');
+        img.src = imgSrc;
+        img.alt = 'Layers';
+        img.decoding = 'async';
+        link.appendChild(img);
+    });
+
+    gallery.appendChild(link);
+}
+
 function renderProjects(data) {
     const fragment = document.createDocumentFragment();
     
@@ -70,6 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             displayMessage(projectsContainer, 'No projects found.');
         }
 
+        renderLayersGallery(data);
         setupExternalLinks(data, setupHoverEffect);
     } catch (error) {
         console.error('Error fetching data:', error);
