@@ -1,11 +1,11 @@
 :root {
     /* Colors */
-    --color-bg-primary: #0D0D0D;
-    --color-bg-primary-hover: rgba(255, 255, 255, 0.05);
-    --color-text-primary: #E6E6E6;
-    --color-text-secondary: #818284;
-    --color-text-tertiary: #58595A;
-    --color-border-primary: #1C1C1C;
+    --color-bg-primary: hsla(220, 1%, 5%, 1);
+    --color-bg-primary-hover: hsla(220, 1%, 10%, 1);
+    --color-text-primary: hsla(220, 1%, 96%, 1);
+    --color-text-secondary: hsla(220, 2%, 50%, 1);
+    --color-text-tertiary: hsla(220, 1%, 32%, 1);
+    --color-border-primary: hsla(220, 1%, 11%, 1);
     /* Typography */
     --font-primary: "something-font", serif;
     --font-size-desktop: 1.063rem;
@@ -326,8 +326,8 @@ p {
     transition: opacity 0.25s ease, transform 0.25s ease;
     pointer-events: none;
     z-index: 2;
-    background: #212121;
-    box-shadow: 0 0.6px 0.8px 0 rgba(255, 255, 255, 0.2) inset, 0 6px 12px 2px rgba(255, 255, 255, 0.14) inset;
+    background: hsla(220, 1%, 11%, 1);
+    box-shadow: 0 0.6px 0.8px 0 hsla(220, 1%, 96%, 0.2) inset, 0 6px 12px 2px hsla(220, 1%, 96%, 0.14) inset;
     backdrop-filter: blur(10px);
 }
 .layers-gallery-link:hover::after {
