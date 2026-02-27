@@ -19,9 +19,9 @@
         {
             "name": "App Lab",
             "description": "Engineering surprises",
-            "link": "https://shreeramk.com/app-lab/",
+            "link": "/app-lab",
             "tag_id": "260213",
-            "openInNewTab": true,
+            "openInNewTab": false,
             "images": ["/assets/plugins/App Lab.webp"]
         },
         {
