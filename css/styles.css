@@ -335,11 +335,12 @@ p {
     transform: translate(-50%, -50%) scale(1);
 }
 .layers-gallery-link:hover img {
-    opacity: 0.6;
+    opacity: 0.5;
 }
 /* Component: Links Row */
 .links-row {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-sm);
     margin-top: 0;
 }
@@ -390,7 +391,7 @@ p {
 @media screen and (max-width: 480px) {
     #main-container {
         gap: var(--space-2xl);
-        padding: 2.5rem 0.5rem;
+        padding: 2.5rem 1rem;
         width: fit-content;
         max-width: calc(100vw - 1rem);
     }

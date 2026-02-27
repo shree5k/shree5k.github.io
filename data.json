@@ -44,7 +44,7 @@
     "plugins": [
         {
             "name": "Soul Tokens Mapper",
-            "description": "Maps matched design tokens",
+            "description": "Auto maps matched design tokens",
             "link": "https://github.com/shree5k",
             "image": "/assets/plugins/Soul Tokens Mapper.webp"
         },
