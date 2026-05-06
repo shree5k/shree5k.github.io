@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>slangs</title>
+
+    <style>
+        body {
+            transition: opacity ease-in 0.2s;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        body[unresolved] {
+            opacity: 0;
+            display: block;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #main p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .heading {
+            width: 100%;
+            max-width: 500px;
+            padding-bottom: 12px;
+        }
+
+        .slang-container {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .slang-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            width: 100%;
+        }
+
+        .slang-column:not(:last-child) {
+            border-right: 1px solid #e0e0e0;
+            padding-right: 16px;
+        }
+
+        .slang-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slang-item {
+            margin-bottom: 8px;
+            line-height: 1.6;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .slang-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        @media (max-width: 900px) {
+            .slang-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .slang-column:not(:last-child) {
+                border-right: 1px solid #e0e0e0;
+                padding-right: 16px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .slang-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 20px 16px;
+            }
+            
+            .slang-column:not(:last-child) {
+                border-right: none;
+                padding-right: 0;
+                border-bottom: 1px solid #e0e0e0;
+                padding-bottom: 16px;
+                margin-bottom: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <p>hello, stranger</p>
+        <p style="margin-bottom: 32px; text-align: center;">it’s kinda weird that you ended up here. some people collect coins, stamps, even rocks. <br> i apparently collect sentences people said</p>
+        <div class="slang-container">
+            <div class="slang-grid" id="slangGrid">
+                <!-- Slangs will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+    <script>
+        const slangs = [
+            "You're the yelake to my cha lol",
+            "Keep it private until it's permanent",
+            "Fake it till you make it",
+            "Aemi ra idi?",
+            "Hold on let me overthink this",
+            "Keep it gangsta!",
+            "Expect the unexpected",
+            "Outsider perspective",
+            "Buying books reading none",
+            "Im so stoked for you",
+            "Weighted across greater cause",
+            "Oh no not again!",
+            "Poolin around!",
+            "Dyum welp",
+            "Brain snaking",
+            "Can you sneeze with your eyes open?",
+            "Y tho?",
+            "Beautiful disaster",
+            "I respect your weird choices",
+            "Sign me up",
+            "What the beep",
+            "This lives in my head rent free",
+            "Professional dumbass",
+            "Have to disappear byee",
+            "God level",
+            "Mega fan",
+            "In Mel full chilluu",
+            "That was soo yesterday",
+            "I'd like to report a #design crime",
+            "Anything tuned well",
+            "Too many + 1",
+            "I understand and I'll think about it - I thought about it NO",
+            "Non-shy era?",
+            "I laughed so hard I got stomach pains",
+            "It's taken equal parts of luck skill and privilege for me to be here.",
+            "This kitchen is for dancing",
+            "I weirdly wanted to hear that",
+            "Whatever it takes",
+            "Typefully yours",
+            "I love what I am doing right now we have an amazing team and I am happy to support you from the sidelines as always",
+            "Getting the basics right",
+            "Say what you will the man is a showman",
+            "What are you guys plotting",
+            "Toooo much way too much",
+            "Biryani induced food coma",
+            "Trying to catch up on life",
+            "Pure cinematic cruelty",
+            "Sans sense",
+            "Catharsis",
+            "Betting my entire mental health on this",
+            "Full size render",
+            "Foods apart you can visit here just to experience it",
+            "This upsets me on a daily basis",
+            "I've slowly but surely come round to the idea that being in-person is way better than working remotely.",
+            "Use this as an excuse",
+            "I relate hard to these by the way",
+            "V useful. Yenjaaying",
+            "Sometimes designs are cute but clueless and it's ok",
+            "Bow-chica-bow-wow",
+            "I have done this more times than I want to admit. And it still works great 😂",
+            "🤏 this close to becoming homeless",
+            "God speed brother",
+            "Deserved",
+            "Pcccht",
+            "Naatokay",
+            "Never busy for you I can see you both days",
+            "Let us not get carried away in applying it to everything in sight in its every detail particularly when consequences are contained",
+            "Tomorrow I might discard all my good intentions",
+            "Life got messy. As it should.",
+            "Been there done that",
+            "Appreciate the lack of judgement",
+            "ಅತಿ ಸಾಧಾರಣ ಜೀವನದಲ್ಲಿ ಬಂದ ಅದ್ಭುತ ಅನುಭವ",
+            "Had a rough morning what a great way to start the day",
+            "I underestimated your sneakiness",
+            "It-is-what-it-is-ing my way through the collapse of civilization",
+            "One part arrogance one part aesthetics one part convenience",
+            "If you can't beat them join them",
+            "you act exactly how you look by the way",
+            "okie",
+            "leveraged 1000 to 1",
+            "Without geometry life is pointless.",
+            "ಪರವಶಳಾದೆನು ಅರಿ'ಯುವ ಮುನ್ನವೇ..",
+            "not our style sorry",
+            "salt on the wound",
+            "Shes a vision for sure",
+            "I thank for all who taught the right things even more so taught me to enjoy it",
+            "emotionally taxing event",
+            "all of this is pretty grim",
+            "desperate time calls for desperate measures",
+            "you got fine taste man",
+            "not to worry can you... worry",
+            "I've heard everthing I need to hear",
+            "this made my spine tingle",
+            "So still & full of motion simultaneously",
+            "suffer now or suffer later",
+            "egregious - outstandingly bad",
+            "I've basically given up trying to fight back",
+            "too much information shared!",
+            "hallelujah",
+            "unfortunately the answer would drive you to madness",
+            "had a good factory reset",
+            "ok i giveup",
+            "I'll do anything aaaaaannything",
+            "The right kind of boredom can be hypnotic soothing",
+            "felling attacked",
+            "amennnnn",
+            "get off your macbook pro and go outside",
+            "so so so excited to share this",
+            "How noble in reason how infinite in faculty….In action how like an Angel. In apprehension how like a god.",
+            "Huge W",
+            "two wheels and 200mph",
+            "I'm starting to feel it but I don't want to jinx it",
+            "hes baaaaaaaaack",
+            "my bad as a service'",
+            "The Nokia phone the Tag body spray the pre-surgery Kim Kardashian. This is as 2007 as it gets!",
+            "Road to hell often feels like heaven",
+            "Just for lols",
+            "Those who envy the most often recognise the greatness they cannot reach",
+            "The cure for the pain is in the pain.",
+            "silly me I thought it would work",
+            "good enough isn't good enough",
+            "Driving Under the Influence",
+            "sometimes you need to make something complex to make it simple",
+            "simple living high thinking",
+            "Wot",
+            "Hello stranger",
+            "Thethereke",
+            "this after 3pm on friday is next weeks concern",
+            "night before a day off is more satisfying than the actual day off",
+            "Introverts are social vegans: they avoid meet.",
+            "let me make you uncomfortable for a moment",
+            "Minor disappointment but ok",
+            "Blocking is selfcare",
+            "magnifisont",
+            "I welcome this incentive to keep up my commitment to daily ingestion of the demon bean.",
+            "Bayankara famousu",
+            "Teiceee",
+            "Gladly",
+            "No problem there",
+            "tomorrow isn't promised we need to flirt today.",
+            "😭 = 😂😂😂",
+            "Why is your eyes smiling",
+            "Lets add to the words of wisdom",
+            "I dont even know what to say but i want to talk to you 😭",
+            "Yentha avasthe maaare",
+            "Twas nice",
+            "i overcame i healed i moved on",
+            "not if i see you first",
+            "Beyond Fantastic. Perfect. Sublime.",
+            "oh gwad",
+            "last friday was my last day with design. an incredible 3 years with some friends for life. immensely grateful ❤️",
+            "Happy birthday ! (?)",
+            "Hello ! (?)",
+            "Ooooho",
+            "Ababbooooo",
+            "come on 💃 come on 💃 one pound 🐟",
+            "Be the reason someone closes this app today",
+            "Finest fella",
+            "ackshually",
+            "Salam molecule",
+            "gpt5 summarize this lengthy essay",
+            "I don't really have time for the whole openAI drama. I am quite busy keeping up with the Kardashians.",
+            "Tech stack > user value",
+            "BRO 😭 translate it thenn",
+            "Sole ಏ ಗೆಲುವಿನ ಸೋಪಾನ.",
+            "ABND - Ayth Bidappa Ninde Dhoddhu",
+            "Prove it",
+            "Become unbecomeable",
+            "on my knees, begging, to be bestowed w this so my night stand will forever be sat in gratitude",
+            "do a 360 and moonwalk out of there",
+            "Choose you",
+            "this space is exhausting, taking some time off for a mental break. see you in 20 mins.",
+            "hey (with the intention of asking for your four favorites)",
+            "Alright milady",
+            "our mutual craving for coffees",
+            "passé - no longer fashionable; out of date.",
+            "Give your liver a break",
+            "i like big tress and i cannot lie",
+            "Sorry I would love to but I just made a bunch of rules for myself and I'm actually not allowed to do that",
+            "Admire obsessed",
+            "Horrible Situation Somehow Gets Worse",
+            "I would go straight home and sit in silence for the rest of the night",
+            "An ardent dosey devotee🙂‍↕️",
+            "Work of art",
+            "Doomed",
+            "We good today",
+            "Fck it we ball",
+            "privilege escalation",
+            "Do we have to split this evenly",
+            "Empty corners to look for when visiting out",
+            "wait, for real??",
+            "Soak up the earths natural aura",
+            "Atleast 11 years in Jail",
+            "Vanity upon vanity, pointless lowkey meaningless",
+            "don't dwell on things you can't change",
+            "The publishing impluse",
+            "I could be the person writing one time verification codes. 873726. 290971. 041452. 667656. It comes naturally to me.",
+            "You're a 10 but it's on the pH scale",
+            "I'm only going to spell definitely right about 1/2 the time without spellcheck And don't even get me started on Entrepreneur, February, and if you're still reading this nonsense we should grab a drink",
+            "I like the concept of existence but I'm not like blown away",
+            "talking about a beat drop in classical music",
+            "Sleeping through my favorite TV shows multiple times.",
+            "joke - I failed a test in an elevator once. I was wrong on so many levels.",
+            "joke, unusuall skill - coming up with the perfect comeback two days later",
+            "I always* know where north is. (*almost)",
+            "Will never passive-aggressively text K",
+            "just gave your address to some spiders",
+            "If your a bug just be careful ok",
+            "only in dark moments",
+            "Lets go lets go lets go!",
+            "My imaginative ass thought it was somethin else",
+            "Good heavens",
+            "Chumma",
+            "Weak left eye, zero eye and hand coordination",
+            "Vasthinista vaage",
+            "the faster it ignites, the sooner it defuses",
+            "Next weeks concern",
+            "Whoever lost their phone at Travis Scott concert yesterday please DM me. I'm gonna need the charger",
+            "Apart from my actions what the hell did I do to deserve this",
+            "Flipped a coin",
+            "if you want to be happy, don't be sad",
+            "i might sound like a plant but i do like sunlight",
+            "i can fold my tongue like a taco",
+            "In a busy park, at some point you will match the pace of a random person and the awkwardness peaks",
+            "Tataaa",
+            "just updated to liquid glass and it is genuinely 100x worse than i imagined",
+            "Is fog real??? Everytime i get close it disappears",
+            "having a job is cool, but EVERYDAY???",
+            "Kinda worried about something. Don't know what it is yet.",
+            "sorry i didn't reply for 45 days lol what's up tho",
+            "how do you know them? we go to the same social media",
+            "let's play hide and seek, i will hide and you will seek professional help",
+            "sun is gonna explode someday, so take it easy",
+            "Tree gazing",
+            "thankyouuuuu soooo fkinnn muchhhhhh",
+            "infinitesimal - extremely small",
+            "I carry cash now, they don't detect my location",
+            "where art thou why not uponeth me",
+            "god bless the dinosaur that died to make fossil fuel that was treated to become petrol for the vehicle that took her mom to the hospital to give birth to someone as beautiful as her",
+            "Solvem probler",
+            "Manifesting my delusions",
+            "Favourite show? Storage wars",
+            "She said wow 3 times",
+            "Heyy, Are you interested in a wemetontwitter kinda photo in next 5 years?",
+            "Ducks are soo mean",
+            "you look like the rest of my life",
+            "ruined it, i guess see you in next life, amen",
+            "I love people who are fluent in spongebob references",
+            "one major problem i'm facing right now is that i look like i have money",
+            "i mean what can i say",
+            "I like being alone, but if I really like you, I want you in my space",
+            "they are not old, its classic",
+            "I have a wtf is wrong with people moment at least five times a day",
+            "at this point the only thing that can heal me is memory loss",
+            "Chiiiiiiiii",
+            "waow",
+            "I believed it was better to be ordinary, virtuous to be humble.",
+            "Systems for creative execution",
+            "the grief is immense but so is the joy",
+            "Sometimes you gotto give a shit, sometimes you absolutely don't. I guess its the balance",
+            "Are you done hating me",
+            "Got any plans today? Catchup over a coffee?",
+            "Ooru",
+            "To try random images to strava runs, pasta bowl and strava run map.. most unrelated ones",
+            "Magnificent nonetheless",
+            "Seems like its a you issue",
+            "actually i'm just observant and have insane pattern recognition",
+            "Maybe in another life",
+            "May i get your number for future queries and annoyances (no pressure)",
+            "Unforgivable",
+            "Keep a rock inside the pocket - stoned",
+            "Give a absolute fck if someone disrespects your closed ones",
+            "What am I looking at and why can't I look away, its soo good",
+            "They still emit a concrete creepiness",
+            "i think i would start stuttering if i saw you irl",
+            "i'm gonna hold your hands when i say this…",
+            "gotta water the plant to get the fruit my man",
+            "you are just mad because you are angry",
+            "i'm doing this on best-effort basis",
+            "Very boring -.-",
+            "Wash your algorithm with kerosene",
+            "You know what they say it's always bedtime somwhere",
+            "Be like IRCTC Annoying but irreplaceable",
+            "for me that's like watching mona lisa in person",
+            "your secret is safe with me unless it's funny",
+            "machine needs to feel the wind again",
+            "we'll put off one scenes, and chill off maams",
+            "like ithu"
+        ];
+
+        function loadSlangs() {
+            const grid = document.getElementById('slangGrid');
+            
+            // Calculate number of columns based on viewport width
+            function getColumns() {
+                const width = window.innerWidth;
+                if (width <= 600) return 1;
+                if (width <= 900) return 2;
+                return 3;
+            }
+
+            function distributeSlangs() {
+                const columns = getColumns();
+                grid.innerHTML = '';
+                
+                // Create column containers
+                for (let i = 0; i < columns; i++) {
+                    const column = document.createElement('div');
+                    column.className = 'slang-column';
+                    grid.appendChild(column);
+                }
+
+                // Distribute slangs across columns
+                const columnElements = grid.querySelectorAll('.slang-column');
+                slangs.forEach((slang, index) => {
+                    const columnIndex = index % columns;
+                    const slangItem = document.createElement('div');
+                    slangItem.className = 'slang-item';
+                    slangItem.textContent = slang;
+                    
+                    // Add click handler to copy to clipboard
+                    slangItem.addEventListener('click', async () => {
+                        try {
+                            await navigator.clipboard.writeText(slang);
+                            // Visual feedback
+                            const originalText = slangItem.textContent;
+                            slangItem.textContent = 'copied!';
+                            
+                            setTimeout(() => {
+                                slangItem.textContent = originalText;
+                            }, 200);
+                        } catch (err) {
+                            console.error('Failed to copy:', err);
+                        }
+                    });
+                    
+                    columnElements[columnIndex].appendChild(slangItem);
+                });
+            }
+
+            // Initial load
+            distributeSlangs();
+
+            // Redistribute on window resize with debouncing
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(distributeSlangs, 250);
+            });
+        }
+
+        // Load slangs when DOM is ready
+        document.addEventListener('DOMContentLoaded', loadSlangs);
+    </script>
+</body>
+</html>
