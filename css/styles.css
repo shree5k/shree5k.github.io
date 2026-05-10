@@ -6,23 +6,26 @@
     --color-text-secondary: hsla(220, 2%, 50%, 1);
     --color-text-tertiary: hsla(220, 1%, 32%, 1);
     --color-border-primary: hsla(220, 1%, 11%, 1);
+    --color-selection-bg: hsla(0, 0%, 100%, 0.08);
     /* Typography */
     --font-primary: "something-font", serif;
-    --font-size-desktop: 1.063rem;
+    --font-size-desktop: 1rem;
     --font-size-mobile: 1.063rem;
     --font-weight: 500;
     /* Spacing */
     --space-xxs: 0px;
     --space-xs: 0.125rem;
     --space-xsm: 0.25rem;
-    --space-sm: 0.75rem;
+    --space-sm: 0.55rem;
     --space-md: 0.875rem;
     --space-lg: 1rem;
     --space-xl: 1.5rem;
     --space-2xl: 2.2rem;
-    --space-3xl: 3.5rem;
+    --space-3xl: 3rem;
     /* Layout */
-    --container-max-width: 40vw;
+    --container-max-width: 80vw;
+    /* Vertical rhythm between #main-container direct children (intro + each section) */
+    --page-section-gap: var(--space-2xl);
     /* Transitions */
     --transition-base: 0.3s ease;
 }
@@ -41,14 +44,20 @@ body {
     font-family: var(--font-primary);
     transition: opacity 0.8s ease-out, filter 0.8s ease-out;
 }
+::selection {
+    background-color: var(--color-selection-bg);
+}
+::-moz-selection {
+    background-color: var(--color-selection-bg);
+}
 #main-container {
     display: flex;
     flex-direction: column;
-    width: 460px;
+    width: 560px;
     max-width: var(--container-max-width);
     padding: 5rem 2rem;
     margin: 0 auto;
-    gap: var(--space-2xl);
+    gap: var(--page-section-gap);
     position: relative;
 }
 p {
@@ -65,18 +74,19 @@ p {
 }
 .intro-header {
     display: flex;
-    align-items: center;
-    gap: var(--space-sm);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
 }
 .intro-logo {
-    width: 3.125rem;
-    height: 3.125rem;
+    width: 2.8rem;
+    height: 2.8rem;
     border-radius: 50%;
 }
 .intro-content {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 0.2rem;
 }
 /* Component: Page Titles */
 #section-title {
@@ -95,18 +105,34 @@ p {
     position: relative;
     display: inline-block;
 }
+.intro-bio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-top: 0.6rem;
+    max-width: 42em;
+}
+.intro-bio p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-desktop);
+    font-weight: var(--font-weight);
+    line-height: 1.22rem;
+    letter-spacing: 0.01rem;
+    font-family: var(--font-primary);
+}
 /* Component: Tools Section */
 .section-container {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
+    gap: 0.85rem;
 }
 .section-title-wrapper {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
+    gap: var(--space-xsm);
     flex-wrap: wrap;
-    padding-bottom: 0.438rem;
+    padding-bottom: var(--space-xsm);
 }
 /* Component: Topic Items */
 .topic-item {
@@ -197,7 +223,7 @@ p {
 }
 .forest-container {
     position: absolute;
-    left: 4px;
+    left: -1px;
     top: -3px;
     transform: translateY(-100%);
     z-index: -1;
@@ -253,8 +279,8 @@ p {
     margin: 0;
     padding: 0;
     vertical-align: middle;
-    width: 3.125rem;
-    height: 3.125rem;
+    width: 2.8rem;
+    height: 2.8rem;
 }
 .animated-item {
     opacity: 0;
@@ -271,7 +297,6 @@ p {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin: var(--space-sm) 0;
     position: relative;
 }
 .project-item-wrapper:has(.topic-item:hover) {
@@ -357,7 +382,7 @@ p {
 /* Responsive Breakpoints */
 @media screen and (max-width: 768px) {
     #main-container {
-        gap: var(--space-3xl);
+        --page-section-gap: var(--space-3xl);
         padding: 3rem 1rem;
         width: fit-content;
         max-width: calc(100vw - 2rem);
@@ -366,6 +391,9 @@ p {
         font-size: var(--font-size-mobile);
     }
     .subtitle {
+        font-size: var(--font-size-mobile);
+    }
+    .intro-bio p {
         font-size: var(--font-size-mobile);
     }
     .topic-item {
@@ -396,14 +424,12 @@ p {
 }
 @media screen and (max-width: 480px) {
     #main-container {
-        gap: var(--space-2xl);
+        --page-section-gap: var(--space-2xl);
         padding: 2.5rem 1rem;
         width: fit-content;
         max-width: calc(100vw - 1rem);
     }
     .intro-header {
-        flex-direction: column;
-        align-items: flex-start;
         gap: var(--space-xsm);
     }
     .intro-logo {
@@ -414,7 +440,7 @@ p {
         gap: var(--space-xs);
     }
     .section-title-wrapper {
-        gap: 0.313rem;
+        gap: var(--space-xsm);
     }
     .section-title-wrapper #section-title {
         margin-bottom: var(--space-xs);
