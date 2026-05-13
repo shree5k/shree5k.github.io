@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>memes</title>
+    <title>Image Gallery</title>
 
     <style>
         body {
@@ -15,7 +15,6 @@
             color: #111;
         }
 
-        /* 🥠 Fortune Cookie Link */
         #fortune-trigger {
             position: fixed;
             top: 20px;
@@ -28,18 +27,13 @@
             user-select: none;
             transition: color 0.2s;
         }
-        #fortune-trigger:hover {
-            color: #000;
-        }
+        #fortune-trigger:hover { color: #000; }
 
-        /* 🖼️ Full Scale Overlay */
         #overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.98); /* Near white, or use rgba(0,0,0,0.9) for dark */
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.98);
             display: none;
             justify-content: center;
             align-items: center;
@@ -61,15 +55,9 @@
             gap: 8px;
         }
 
-        #main p {
-            margin: 0;
-            line-height: 1.6;
-        }
+        #main p { margin: 0; line-height: 1.6; }
 
-        .slang-container {
-            width: 100%;
-            margin: 0 auto;
-        }
+        .slang-container { width: 100%; margin: 0 auto; }
 
         .slang-grid {
             display: grid;
@@ -78,41 +66,33 @@
             width: 100%;
         }
 
-        .slang-column {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .slang-column { display: flex; flex-direction: column; gap: 8px; }
 
         .img-wrapper {
             position: relative;
             width: 100%;
             cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .slang-item {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .slang-item { width: 100%; height: auto; display: block; }
 
         .copy-overlay {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.7);
             color: #fff;
             padding: 8px 16px;
-            font-size: 14px;
+            font-size: 12px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s ease;
+            white-space: nowrap;
         }
 
-        .copy-overlay.show {
-            opacity: 1;
-        }
+        .copy-overlay.show { opacity: 1; }
 
         @media (max-width: 1200px) {
             .slang-grid { grid-template-columns: repeat(4, 1fr); }
@@ -127,10 +107,8 @@
 </head>
 
 <body>
-    <!-- Fortune Cookie Trigger -->
     <div id="fortune-trigger">fortune cookie</div>
 
-    <!-- Full Scale Modal -->
     <div id="overlay">
         <img id="overlay-img" src="" alt="Full Scale View">
     </div>
@@ -142,14 +120,14 @@
             ¯\_(ツ)_/¯
         </p>
         <div class="slang-container">
-            <div class="slang-grid" id="slangGrid">
-                <!-- Content via JS -->
-            </div>
+            <div class="slang-grid" id="slangGrid"></div>
         </div>
     </div>
     
     <script>
         let imagesList = [];
+        let currentIndex = 0; // Track which image is open
+        
         const overlay = document.getElementById('overlay');
         const overlayImg = document.getElementById('overlay-img');
         const fortuneBtn = document.getElementById('fortune-trigger');
@@ -161,18 +139,60 @@
             }
         }
 
-        // Close Overlay logic
-        overlay.addEventListener('click', () => {
+        // --- OVERLAY NAVIGATION ---
+        function openFullView(index) {
+            currentIndex = index;
+            overlayImg.src = `assets/${imagesList[currentIndex]}`;
+            overlay.style.display = 'flex';
+        }
+
+        function closeOverlay() {
             overlay.style.display = 'none';
+        }
+
+        function navigateOverlay(direction) {
+            if (overlay.style.display !== 'flex') return;
+            
+            currentIndex += direction;
+            
+            // Loop around if at start or end
+            if (currentIndex >= imagesList.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = imagesList.length - 1;
+            
+            overlayImg.src = `assets/${imagesList[currentIndex]}`;
+        }
+
+        // Keyboard Event Listener
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') navigateOverlay(1);
+            if (e.key === 'ArrowLeft') navigateOverlay(-1);
+            if (e.key === 'Escape') closeOverlay();
         });
 
-        // Fortune Cookie logic
+        overlay.addEventListener('click', closeOverlay);
+
         fortuneBtn.addEventListener('click', () => {
             if (imagesList.length === 0) return;
-            const randomImage = imagesList[Math.floor(Math.random() * imagesList.length)];
-            overlayImg.src = `assets/${randomImage}`;
-            overlay.style.display = 'flex';
+            const randIdx = Math.floor(Math.random() * imagesList.length);
+            openFullView(randIdx);
         });
+
+        async function copyToClipboard(imgEl, msgEl) {
+            const cvs = document.createElement('canvas');
+            cvs.width = imgEl.naturalWidth;
+            cvs.height = imgEl.naturalHeight;
+            const ctx = cvs.getContext('2d');
+            ctx.drawImage(imgEl, 0, 0);
+            
+            cvs.toBlob(async (blob) => {
+                try {
+                    const item = new ClipboardItem({ 'image/png': blob });
+                    await navigator.clipboard.write([item]);
+                    msgEl.classList.add('show');
+                    setTimeout(() => msgEl.classList.remove('show'), 1000);
+                } catch (err) { console.error(err); }
+            }, 'image/png');
+        }
 
         function loadImages() {
             const grid = document.getElementById('slangGrid');
@@ -187,11 +207,10 @@
             function distributeImages() {
                 const columns = getColumns();
                 grid.innerHTML = '';
-                
                 for (let i = 0; i < columns; i++) {
-                    const column = document.createElement('div');
-                    column.className = 'slang-column';
-                    grid.appendChild(column);
+                    const col = document.createElement('div');
+                    col.className = 'slang-column';
+                    grid.appendChild(col);
                 }
 
                 const columnElements = grid.querySelectorAll('.slang-column');
@@ -205,30 +224,26 @@
                     img.className = 'slang-item';
                     img.src = `assets/${file}`;
                     img.loading = 'lazy'; 
-                    img.alt = file;
 
                     const copyMsg = document.createElement('div');
                     copyMsg.className = 'copy-overlay';
                     copyMsg.textContent = 'copied!';
                     
-                    // Click to Copy Logic
+                    let clickCount = 0;
+                    let clickTimer;
+
                     wrapper.addEventListener('click', (e) => {
-                        const cvs = document.createElement('canvas');
-                        cvs.width = img.naturalWidth;
-                        cvs.height = img.naturalHeight;
-                        const ctx = cvs.getContext('2d');
-                        ctx.drawImage(img, 0, 0);
-                        
-                        cvs.toBlob(async (blob) => {
-                            try {
-                                const item = new ClipboardItem({ 'image/png': blob });
-                                await navigator.clipboard.write([item]);
-                                copyMsg.classList.add('show');
-                                setTimeout(() => copyMsg.classList.remove('show'), 1000);
-                            } catch (err) {
-                                console.error('Clipboard error:', err);
-                            }
-                        }, 'image/png');
+                        clickCount++;
+                        if (clickCount === 1) {
+                            clickTimer = setTimeout(() => {
+                                copyToClipboard(img, copyMsg);
+                                clickCount = 0;
+                            }, 250); 
+                        } else if (clickCount === 2) {
+                            clearTimeout(clickTimer);
+                            openFullView(index); // Pass the index
+                            clickCount = 0;
+                        }
                     });
                     
                     wrapper.appendChild(img);
@@ -243,8 +258,7 @@
                     shuffleArray(files);
                     imagesList = files;
                     distributeImages(); 
-                })
-                .catch(err => console.error(err));
+                });
 
             let resizeTimeout;
             window.addEventListener('resize', () => {
