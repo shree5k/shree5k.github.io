@@ -4,270 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>memes</title>
-
     <style>
-        body {
-            transition: opacity ease-in 0.2s;
-            margin: 0;
-            padding: 40px 20px;
-            font-family: sans-serif;
-            background-color: #ffffff;
-            color: #111;
-        }
-
-        #fortune-trigger {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            font-style: italic;
-            font-size: 14px;
-            cursor: pointer;
-            z-index: 100;
-            color: #666;
-            user-select: none;
-            transition: color 0.2s;
-        }
+        body { margin: 0; padding: 40px 20px; font-family: sans-serif; background: #fff; color: #111; transition: opacity 0.2s; }
+        #fortune-trigger { position: fixed; top: 20px; right: 20px; font-style: italic; font-size: 14px; cursor: pointer; z-index: 100; color: #666; user-select: none; }
         #fortune-trigger:hover { color: #000; }
-
-        #overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.98);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            cursor: zoom-out;
-        }
-
-        #overlay img {
-            max-width: 95%;
-            max-height: 95%;
-            object-fit: contain;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-        }
-
-        #main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        #main p { margin: 0; line-height: 1.6; }
-
-        .slang-container { width: 100%; margin: 0 auto; }
-
-        .slang-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            width: 100%;
-        }
-
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); display: none; justify-content: center; align-items: center; z-index: 1000; cursor: zoom-out; }
+        #overlay img { max-width: 95%; max-height: 95%; object-fit: contain; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        #main { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        #search-input { display: none; margin-bottom: 30px; padding: 10px; width: 100%; max-width: 400px; font-size: 16px; border: 1px solid #ddd; outline: none; }
+        .slang-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; width: 100%; }
         .slang-column { display: flex; flex-direction: column; gap: 8px; }
-
-        .img-wrapper {
-            position: relative;
-            width: 100%;
-            cursor: pointer;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        .img-wrapper { position: relative; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
         .slang-item { width: 100%; height: auto; display: block; }
-
-        .copy-overlay {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            padding: 8px 16px;
-            font-size: 12px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            white-space: nowrap;
-        }
-
+        .copy-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.7); color: #fff; padding: 8px 16px; font-size: 12px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
         .copy-overlay.show { opacity: 1; }
-
-        @media (max-width: 1200px) {
-            .slang-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            .slang-grid { grid-template-columns: repeat(2, 1fr); }
-            body { padding: 20px 16px; }
-            #fortune-trigger { top: 10px; right: 10px; }
-        }
+        @media (max-width: 1200px) { .slang-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px) { .slang-grid { grid-template-columns: repeat(2, 1fr); } body { padding: 20px 16px; } #fortune-trigger { top: 10px; right: 10px; } }
     </style>
 </head>
-
 <body>
     <div id="fortune-trigger">fortune cookie</div>
-
-    <div id="overlay">
-        <img id="overlay-img" src="" alt="Full Scale View">
-    </div>
-
+    <div id="overlay"><img id="overlay-img" src=""></div>
     <div id="main">
-        <p style="margin-bottom: 32px; text-align: center;">
-            hello, stranger <br>
-            presenting you my generational meme collection <br>
-            ¯\_(ツ)_/¯
-        </p>
-        <div class="slang-container">
-            <div class="slang-grid" id="slangGrid"></div>
-        </div>
+        <p style="margin-bottom: 20px; text-align: center;">hello, stranger <br> presenting you my generational meme collection <br> ¯\_(ツ)_/¯</p>
+        <input type="text" id="search-input" placeholder="Search (Cmd+K)">
+        <div class="slang-container"><div class="slang-grid" id="slangGrid"></div></div>
     </div>
-    
     <script>
-        let imagesList = [];
-        let currentIndex = 0; // Track which image is open
-        
-        const overlay = document.getElementById('overlay');
-        const overlayImg = document.getElementById('overlay-img');
-        const fortuneBtn = document.getElementById('fortune-trigger');
+        let masterIndex = [], imagesList = [], currentIndex = 0;
+        const overlay = document.getElementById('overlay'), overlayImg = document.getElementById('overlay-img');
+        const fortuneBtn = document.getElementById('fortune-trigger'), searchInput = document.getElementById('search-input'), grid = document.getElementById('slangGrid');
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
+        function openFullView(index) { currentIndex = index; overlayImg.src = `assets/${imagesList[currentIndex]}`; overlay.style.display = 'flex'; }
+        function closeOverlay() { overlay.style.display = 'none'; }
+        function closeSearch() { searchInput.value = ''; searchInput.style.display = 'none'; imagesList = masterIndex.map(i => i.fn); distributeImages(); }
+        function navigate(dir) { if (overlay.style.display !== 'flex') return; currentIndex = (currentIndex + dir + imagesList.length) % imagesList.length; overlayImg.src = `assets/${imagesList[currentIndex]}`; }
 
-        // --- OVERLAY NAVIGATION ---
-        function openFullView(index) {
-            currentIndex = index;
-            overlayImg.src = `assets/${imagesList[currentIndex]}`;
-            overlay.style.display = 'flex';
-        }
-
-        function closeOverlay() {
-            overlay.style.display = 'none';
-        }
-
-        function navigateOverlay(direction) {
-            if (overlay.style.display !== 'flex') return;
-            
-            currentIndex += direction;
-            
-            // Loop around if at start or end
-            if (currentIndex >= imagesList.length) currentIndex = 0;
-            if (currentIndex < 0) currentIndex = imagesList.length - 1;
-            
-            overlayImg.src = `assets/${imagesList[currentIndex]}`;
-        }
-
-        // Keyboard Event Listener
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') navigateOverlay(1);
-            if (e.key === 'ArrowLeft') navigateOverlay(-1);
-            if (e.key === 'Escape') closeOverlay();
+        window.addEventListener('keydown', e => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); searchInput.style.display = 'block'; searchInput.focus(); }
+            if (e.key === 'Escape') { if (overlay.style.display === 'flex') closeOverlay(); else closeSearch(); }
+            if (e.key === 'ArrowRight') navigate(1); if (e.key === 'ArrowLeft') navigate(-1);
         });
 
-        overlay.addEventListener('click', closeOverlay);
-
-        fortuneBtn.addEventListener('click', () => {
-            if (imagesList.length === 0) return;
-            const randIdx = Math.floor(Math.random() * imagesList.length);
-            openFullView(randIdx);
+        searchInput.addEventListener('input', e => {
+            const q = e.target.value.toLowerCase();
+            imagesList = masterIndex.filter(i => i.kw.includes(q)).map(i => i.fn);
+            distributeImages();
         });
 
-        async function copyToClipboard(imgEl, msgEl) {
-            const cvs = document.createElement('canvas');
-            cvs.width = imgEl.naturalWidth;
-            cvs.height = imgEl.naturalHeight;
-            const ctx = cvs.getContext('2d');
-            ctx.drawImage(imgEl, 0, 0);
-            
-            cvs.toBlob(async (blob) => {
-                try {
-                    const item = new ClipboardItem({ 'image/png': blob });
-                    await navigator.clipboard.write([item]);
-                    msgEl.classList.add('show');
-                    setTimeout(() => msgEl.classList.remove('show'), 1000);
-                } catch (err) { console.error(err); }
+        async function copyImg(img, msg) {
+            const c = document.createElement('canvas');
+            c.width = img.naturalWidth; c.height = img.naturalHeight;
+            c.getContext('2d').drawImage(img, 0, 0);
+            c.toBlob(async b => {
+                try { await navigator.clipboard.write([new ClipboardItem({'image/png': b})]); msg.classList.add('show'); setTimeout(() => msg.classList.remove('show'), 1000); } catch(e){}
             }, 'image/png');
         }
 
-        function loadImages() {
-            const grid = document.getElementById('slangGrid');
-            
-            function getColumns() {
-                const width = window.innerWidth;
-                if (width <= 768) return 2;
-                if (width <= 1200) return 4;
-                return 7;
-            }
-
-            function distributeImages() {
-                const columns = getColumns();
-                grid.innerHTML = '';
-                for (let i = 0; i < columns; i++) {
-                    const col = document.createElement('div');
-                    col.className = 'slang-column';
-                    grid.appendChild(col);
-                }
-
-                const columnElements = grid.querySelectorAll('.slang-column');
-                
-                imagesList.forEach((file, index) => {
-                    const columnIndex = index % columns;
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'img-wrapper';
-
-                    const img = document.createElement('img');
-                    img.className = 'slang-item';
-                    img.src = `assets/${file}`;
-                    img.loading = 'lazy'; 
-
-                    const copyMsg = document.createElement('div');
-                    copyMsg.className = 'copy-overlay';
-                    copyMsg.textContent = 'copied!';
-                    
-                    let clickCount = 0;
-                    let clickTimer;
-
-                    wrapper.addEventListener('click', (e) => {
-                        clickCount++;
-                        if (clickCount === 1) {
-                            clickTimer = setTimeout(() => {
-                                copyToClipboard(img, copyMsg);
-                                clickCount = 0;
-                            }, 250); 
-                        } else if (clickCount === 2) {
-                            clearTimeout(clickTimer);
-                            openFullView(index); // Pass the index
-                            clickCount = 0;
-                        }
-                    });
-                    
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(copyMsg);
-                    columnElements[columnIndex].appendChild(wrapper);
-                });
-            }
-
-            fetch('images.json')
-                .then(response => response.json())
-                .then(files => {
-                    shuffleArray(files);
-                    imagesList = files;
-                    distributeImages(); 
-                });
-
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(distributeImages, 250);
+        function distributeImages() {
+            const cols = window.innerWidth <= 768 ? 2 : (window.innerWidth <= 1200 ? 4 : 7);
+            grid.innerHTML = '';
+            const colElems = Array.from({length: cols}, () => { const d = document.createElement('div'); d.className = 'slang-column'; grid.appendChild(d); return d; });
+            imagesList.forEach((file, i) => {
+                const w = document.createElement('div'); w.className = 'img-wrapper';
+                const img = document.createElement('img'); img.className = 'slang-item'; img.src = `assets/${file}`; img.loading = 'lazy';
+                const m = document.createElement('div'); m.className = 'copy-overlay'; m.textContent = 'copied!';
+                let count = 0, timer;
+                w.onclick = () => { count++; if(count===1) timer = setTimeout(() => { copyImg(img, m); count=0; }, 250); else { clearTimeout(timer); openFullView(i); count=0; }};
+                w.append(img, m); colElems[i % cols].appendChild(w);
             });
         }
 
-        document.addEventListener('DOMContentLoaded', loadImages);
+        overlay.onclick = closeOverlay;
+        fortuneBtn.onclick = () => { if(imagesList.length) openFullView(Math.floor(Math.random() * imagesList.length)); };
+        window.onresize = () => { clearTimeout(window.rt); window.rt = setTimeout(distributeImages, 250); };
+
+        fetch('./json/search_index.json').then(r => r.json()).then(data => {
+            masterIndex = data.sort(() => Math.random() - 0.5);
+            imagesList = masterIndex.map(i => i.fn);
+            distributeImages();
+        });
     </script>
 </body>
 </html>
