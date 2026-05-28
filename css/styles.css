@@ -12,6 +12,7 @@
     --font-size-desktop: 1rem;
     --font-size-mobile: 1.063rem;
     --font-weight: 500;
+    --font-weight-400: 400;
     /* Spacing */
     --space-xxs: 0px;
     --space-xs: 0.125rem;
@@ -116,7 +117,7 @@ p {
     margin: 0;
     color: var(--color-text-secondary);
     font-size: var(--font-size-desktop);
-    font-weight: var(--font-weight);
+    font-weight: var(--font-weight-400);
     line-height: 1.22rem;
     letter-spacing: 0.01rem;
     font-family: var(--font-primary);
@@ -147,7 +148,7 @@ p {
     width: fit-content;
     position: relative;
     font-size: var(--font-size-desktop);
-    font-weight: var(--font-weight);
+    font-weight: var(--font-weight-400);
     text-decoration: none;
     text-transform: none;
 }
