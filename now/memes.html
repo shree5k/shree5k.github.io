@@ -30,6 +30,7 @@
         <input type="text" id="search-input" placeholder="Search (Cmd+K)">
         <div class="slang-container"><div class="slang-grid" id="slangGrid"></div></div>
     </div>
+    <script src="./scripts/fortune.js"></script>
     <script>
         let masterIndex = [], imagesList = [], currentIndex = 0;
         const overlay = document.getElementById('overlay'), overlayImg = document.getElementById('overlay-img');
@@ -39,6 +40,16 @@
         function closeOverlay() { overlay.style.display = 'none'; }
         function closeSearch() { searchInput.value = ''; searchInput.style.display = 'none'; imagesList = masterIndex.map(i => i.fn); distributeImages(); }
         function navigate(dir) { if (overlay.style.display !== 'flex') return; currentIndex = (currentIndex + dir + imagesList.length) % imagesList.length; overlayImg.src = `assets/${imagesList[currentIndex]}`; }
+
+        function openRandomFortune() {
+            if (imagesList.length) openFullView(Math.floor(Math.random() * imagesList.length));
+        }
+
+        bindFortuneOpen({
+            trigger: fortuneBtn,
+            openRandom: openRandomFortune,
+            isOpen: () => overlay.style.display === 'flex'
+        });
 
         window.addEventListener('keydown', e => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); searchInput.style.display = 'block'; searchInput.focus(); }
@@ -76,7 +87,6 @@
         }
 
         overlay.onclick = closeOverlay;
-        fortuneBtn.onclick = () => { if(imagesList.length) openFullView(Math.floor(Math.random() * imagesList.length)); };
         window.onresize = () => { clearTimeout(window.rt); window.rt = setTimeout(distributeImages, 250); };
 
         fetch('./json/search_index.json').then(r => r.json()).then(data => {
