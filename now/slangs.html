@@ -479,6 +479,22 @@
             fortuneText.textContent = allSlangs[currentFortuneIndex];
         }
 
+        async function copySlangText(text, el) {
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalText = el.textContent;
+                el.textContent = 'copied!';
+                setTimeout(() => { el.textContent = originalText; }, 200);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        }
+
+        fortuneText.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await copySlangText(allSlangs[currentFortuneIndex], fortuneText);
+        });
+
         overlay.addEventListener('click', closeFortune);
 
         function openRandomFortune() {
@@ -529,20 +545,7 @@
                     slangItem.textContent = slang;
                     
                     // Add click handler to copy to clipboard
-                    slangItem.addEventListener('click', async () => {
-                        try {
-                            await navigator.clipboard.writeText(slang);
-                            // Visual feedback
-                            const originalText = slangItem.textContent;
-                            slangItem.textContent = 'copied!';
-                            
-                            setTimeout(() => {
-                                slangItem.textContent = originalText;
-                            }, 200);
-                        } catch (err) {
-                            console.error('Failed to copy:', err);
-                        }
-                    });
+                    slangItem.addEventListener('click', () => copySlangText(slang, slangItem));
                     
                     columnElements[columnIndex].appendChild(slangItem);
                 });
