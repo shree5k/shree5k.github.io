@@ -36,7 +36,7 @@
         <input type="text" id="search-input" placeholder="Search (Cmd+K)">
         <div class="slang-container"><div class="slang-grid" id="slangGrid"></div></div>
     </div>
-    <script src="./scripts/fortune.js"></script>
+    <script src="../scripts/fortune.js"></script>
     <script>
         let masterIndex = [], imagesList = [], currentIndex = 0;
         const overlay = document.getElementById('overlay'), overlayImg = document.getElementById('overlay-img');
@@ -44,10 +44,10 @@
         const overlayImgWrapper = document.getElementById('overlay-img-wrapper');
         const fortuneBtn = document.getElementById('fortune-trigger'), searchInput = document.getElementById('search-input'), grid = document.getElementById('slangGrid');
 
-        function openFullView(index) { currentIndex = index; overlayImg.src = `assets/${imagesList[currentIndex]}`; overlay.style.display = 'flex'; }
+        function openFullView(index) { currentIndex = index; overlayImg.src = `../assets/${imagesList[currentIndex]}`; overlay.style.display = 'flex'; }
         function closeOverlay() { overlay.style.display = 'none'; }
         function closeSearch() { searchInput.value = ''; searchInput.style.display = 'none'; imagesList = masterIndex.map(i => i.fn); distributeImages(); }
-        function navigate(dir) { if (overlay.style.display !== 'flex') return; currentIndex = (currentIndex + dir + imagesList.length) % imagesList.length; overlayImg.src = `assets/${imagesList[currentIndex]}`; }
+        function navigate(dir) { if (overlay.style.display !== 'flex') return; currentIndex = (currentIndex + dir + imagesList.length) % imagesList.length; overlayImg.src = `../assets/${imagesList[currentIndex]}`; }
 
         function openRandomFortune() {
             if (imagesList.length) openFullView(Math.floor(Math.random() * imagesList.length));
@@ -86,7 +86,7 @@
             const colElems = Array.from({length: cols}, () => { const d = document.createElement('div'); d.className = 'slang-column'; grid.appendChild(d); return d; });
             imagesList.forEach((file, i) => {
                 const w = document.createElement('div'); w.className = 'img-wrapper';
-                const img = document.createElement('img'); img.className = 'slang-item'; img.src = `assets/${file}`; img.loading = 'lazy';
+                const img = document.createElement('img'); img.className = 'slang-item'; img.src = `../assets/${file}`; img.loading = 'lazy';
                 const m = document.createElement('div'); m.className = 'copy-overlay'; m.textContent = 'copied!';
                 let count = 0, timer;
                 w.onclick = () => { count++; if(count===1) timer = setTimeout(() => { copyImg(img, m); count=0; }, 250); else { clearTimeout(timer); openFullView(i); count=0; }};
@@ -102,7 +102,7 @@
         overlay.onclick = closeOverlay;
         window.onresize = () => { clearTimeout(window.rt); window.rt = setTimeout(distributeImages, 250); };
 
-        fetch('./json/search_index.json').then(r => r.json()).then(data => {
+        fetch('../json/search_index.json').then(r => r.json()).then(data => {
             masterIndex = data.sort(() => Math.random() - 0.5);
             imagesList = masterIndex.map(i => i.fn);
             distributeImages();

@@ -23,13 +23,21 @@
         #main {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
         }
 
         #main p {
             margin: 0;
             line-height: 1.6;
+        }
+
+        .intro {
+            margin-bottom: 20px;
+        }
+
+        .intro p {
+            line-height: 1.2;
         }
 
         details {
@@ -176,8 +184,9 @@
 
 <body>
     <div id="main">
-        <p>hello, stranger</p>
-        <p style="margin-bottom: 32px;">how did you end up here. please get comfy and stay awhile :3</p>
+        <div class="intro">
+            <p>hello, stranger<br>how did you end up here. please get comfy and stay awhile :3</p>
+        </div>
 
         <p class="heading"> -&gt; quote/poem selection</p>
         <details>

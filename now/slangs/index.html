@@ -22,13 +22,13 @@
         #main {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
         }
 
         #main p {
             margin: 0;
-            line-height: 1.6;
+            line-height: 1.2;
         }
 
         .heading {
@@ -60,8 +60,8 @@
         }
 
         .slang-item {
-            margin-bottom: 8px;
-            line-height: 1.6;
+            margin-bottom: 16px;
+            line-height: 1.24;
             cursor: pointer;
             transition: background-color 0.2s ease;
         }
@@ -70,20 +70,39 @@
             background-color: #f5f5f5;
         }
 
-        #fortune-trigger {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+        .fortune-link {
             font-style: italic;
             font-size: 14px;
             cursor: pointer;
-            z-index: 100;
             color: #666;
             user-select: none;
         }
 
-        #fortune-trigger:hover {
+        .fortune-link:hover {
             color: #000;
+        }
+
+        #fortune-trigger {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        #random-trigger {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1001;
+            padding: 12px 28px;
+            min-height: 44px;
+            min-width: 88px;
+            box-sizing: border-box;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #overlay {
@@ -142,23 +161,29 @@
                 top: 10px;
                 right: 10px;
             }
+
+            #random-trigger.visible {
+                display: flex;
+                bottom: 36px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div id="fortune-trigger">fortune cookie</div>
+    <div id="fortune-trigger" class="fortune-link">fortune cookie</div>
+    <div id="random-trigger" class="fortune-link">random</div>
     <div id="overlay"><div id="fortune-text"></div></div>
     <div id="main">
         <p>hello, stranger</p>
-        <p style="margin-bottom: 32px; text-align: center;">it’s kinda weird that you ended up here. some people collect coins, stamps, even rocks. <br> i apparently collect sentences people said</p>
+        <p style="margin-bottom: 32px;">it’s kinda weird that you ended up here. some people collect coins, stamps, even rocks. <br> apparently, i collect sentences people said</p>
         <div class="slang-container">
             <div class="slang-grid" id="slangGrid">
                 <!-- Slangs will be loaded here by JavaScript -->
             </div>
         </div>
     </div>
-    <script src="./scripts/fortune.js"></script>
+    <script src="../scripts/fortune.js"></script>
     <script>
         const SHEET_API = 'https://script.google.com/macros/s/AKfycbwttTs2hSLADJ2AXyWbbajXwAWl7T7mbp9Vsa02nCy4TuvZplbvCNAOgmHgDx1muwNliQ/exec';
 
@@ -460,6 +485,7 @@
         const overlay = document.getElementById('overlay');
         const fortuneText = document.getElementById('fortune-text');
         const fortuneBtn = document.getElementById('fortune-trigger');
+        const randomBtn = document.getElementById('random-trigger');
         let currentFortuneIndex = 0;
 
         function openFortune(index) {
@@ -467,10 +493,12 @@
             currentFortuneIndex = index;
             fortuneText.textContent = allSlangs[currentFortuneIndex];
             overlay.style.display = 'flex';
+            randomBtn.classList.add('visible');
         }
 
         function closeFortune() {
             overlay.style.display = 'none';
+            randomBtn.classList.remove('visible');
         }
 
         function navigateFortune(dir) {
@@ -507,6 +535,8 @@
             openRandom: openRandomFortune,
             isOpen: () => overlay.style.display === 'flex'
         });
+
+        randomBtn.addEventListener('click', openRandomFortune);
 
         window.addEventListener('keydown', e => {
             if (e.key === 'Escape' && overlay.style.display === 'flex') closeFortune();
