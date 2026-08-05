@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreeram K / Work</title>
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/work/styles.css">
+    <style>
+        body {
+            animation: pageLoad 0.35s cubic-bezier(0.4, 0, 0.2, 1.2);
+        }
+        @keyframes pageLoad {
+            0% { filter: blur(24px); opacity: 0; }
+            25% { filter: blur(18px); opacity: 0.2; }
+            50% { filter: blur(12px); opacity: 0.4; }
+            75% { filter: blur(6px); opacity: 0.8; }
+            90% { filter: blur(3px); opacity: 0.9; }
+            100% { filter: none; opacity: 1; }
+        }
+    </style>
+    <link rel="preload" href="/module-scripts/animations.js" as="script" crossorigin>
+
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LHV4PC8ED5"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LHV4PC8ED5');
+    </script>
+</head>
+<body>
+    <div id="main-container">
+        <aside class="home-link-aside animated-item" style="top: 5rem; left: auto; right: calc(100% + 0.5rem); width: auto; padding: 0px 80px 0px 0px;">
+            <a href="/" class="home-link" style="display: flex; align-items: center; gap: 0.4rem; margin: 0; padding: 0; color: var(--color-text-tertiary); font-size: var(--font-size-desktop); font-weight: var(--font-weight); font-style: italic; text-decoration: none; transition: color var(--transition-base);" onmouseenter="this.style.color='var(--color-text-secondary)'" onmouseleave="this.style.color='var(--color-text-tertiary)'">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 4L1.5 8M1.5 8L5.5 12M1.5 8H10C11.3807 8 12.5 6.88071 12.5 5.5V5.5C12.5 4.11929 11.3807 3 10 3H8.5" stroke="currentColor"></path></svg>
+                Home
+            </a>
+        </aside>
+        <div class="section-container">
+            <div class="intro-content animated-item" style="padding-bottom: 2rem;">
+                <h1 id="section-title">Work <span style="color: var(--color-text-secondary);">//</span> Thoughts</h1>
+                <!-- <div class="subtitle-container">
+                    <p class="subtitle">Thinking out loud, in code</p>
+                </div> -->
+            </div>
+            <div id="work-cards-container" class="hover-effect-container">
+                <div class="hover-bg"></div>
+                ...
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { triggerStaggeredAnimation } from '/module-scripts/animations.js';
+        import { fetchArticlesMetadata } from '/module-scripts/workArticleMetadata.js';
+
+        function renderWorkCards(articles) {
+            const container = document.getElementById('work-cards-container');
+            if (!container) return;
+
+            container.innerHTML = '<div class="hover-bg"></div>';
+
+            articles.forEach((article) => {
+                const card = document.createElement('a');
+                card.href = article.articleUrl;
+                card.className = 'work-card animated-item';
+
+                const imageWrap = document.createElement('div');
+                imageWrap.className = 'work-card-image';
+
+                const image = document.createElement('img');
+                image.src = article.thumbnail;
+                image.alt = article.title;
+                imageWrap.appendChild(image);
+
+                const textWrap = document.createElement('div');
+                textWrap.className = 'work-card-text';
+
+                const title = document.createElement('span');
+                title.className = 'work-card-title';
+                title.textContent = article.listTitle || article.title;
+
+                const date = document.createElement('span');
+                date.className = 'work-card-year';
+                date.textContent = article.cardDateLabel;
+
+                textWrap.appendChild(title);
+                textWrap.appendChild(date);
+                card.appendChild(imageWrap);
+                card.appendChild(textWrap);
+                container.appendChild(card);
+            });
+        }
+
+        function setupCardHover(container) {
+            const hoverBg = container.querySelector('.hover-bg');
+            container.querySelectorAll('.work-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    const textEl = card.querySelector('.work-card-text');
+                    const cRect = container.getBoundingClientRect();
+                    const tRect = textEl.getBoundingClientRect();
+                    const cardRect = card.getBoundingClientRect();
+                    hoverBg.style.top = (cardRect.top - cRect.top) + 'px';
+                    hoverBg.style.left = (tRect.left - cRect.left - 8) + 'px';
+                    hoverBg.style.width = tRect.width + 16 + 'px';
+                    hoverBg.style.height = cardRect.height + 'px';
+                    hoverBg.style.opacity = '1';
+                    hoverBg.style.zIndex = '-1';
+                });
+                card.addEventListener('mouseleave', () => {
+                    hoverBg.style.opacity = '0';
+                });
+            });
+        }
+
+        function setupCardTilt(container) {
+            container.querySelectorAll('.work-card-image').forEach(el => {
+                const MAX_ANGLE = 14;
+
+                el.addEventListener('mousemove', e => {
+                    const rect = el.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width;
+                    const y = (e.clientY - rect.top) / rect.height;
+                    const rotateY = (x - 0.5) * MAX_ANGLE * 2;
+                    const rotateX = (0.5 - y) * MAX_ANGLE * 2;
+                    el.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
+                });
+
+                el.addEventListener('mouseleave', () => {
+                    el.style.transition = 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)';
+                    el.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                    setTimeout(() => { el.style.transition = 'transform 0.15s ease-out'; }, 400);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('work-cards-container');
+
+            try {
+                const articles = await fetchArticlesMetadata();
+                renderWorkCards(articles);
+                setupCardHover(container);
+                setupCardTilt(container);
+            } catch (error) {
+                console.error('Failed to load work articles', error);
+                if (container) {
+                    container.innerHTML = '<p class="work-article-error">Something went wrong loading the articles.</p>';
+                }
+            }
+
+            setTimeout(() => {
+                triggerStaggeredAnimation();
+            }, 400);
+        });
+    </script>
+</body>
+</html>

@@ -3,6 +3,7 @@ import { setupExternalLinks } from '/module-scripts/externalLinks.js';
 import { setupHoverEffect } from '/module-scripts/hoverEffect.js';
 
 let projectsContainer = null;
+let workArticlesContainer = null;
 
 async function fetchData(url) {
     const response = await fetch(url);
@@ -77,8 +78,42 @@ function renderProjects(data) {
     setupHoverEffect(projectsContainer);
 }
 
+function renderWorkArticles(data) {
+    if (!workArticlesContainer) return;
+
+    const fragment = document.createDocumentFragment();
+
+    data.articles.forEach((article) => {
+        const articleWrapper = document.createElement('div');
+        articleWrapper.className = 'project-item-wrapper animated-item';
+
+        const line = document.createElement('span');
+        line.className = 'project-line';
+
+        const date = document.createElement('span');
+        date.className = 'article-date';
+        const [year, month] = String(article.date || '').split('-');
+        date.textContent = year && month ? `${month}/${year.slice(-2)}` : '';
+
+        const articleLink = document.createElement('a');
+        articleLink.className = 'topic-item';
+        articleLink.href = `/work/article.html?article=${article.slug}`;
+        articleLink.textContent = article.listTitle || article.title;
+
+        articleWrapper.appendChild(articleLink);
+        articleWrapper.appendChild(line);
+        articleWrapper.appendChild(date);
+        fragment.appendChild(articleWrapper);
+    });
+
+    workArticlesContainer.innerHTML = '';
+    workArticlesContainer.appendChild(fragment);
+    setupHoverEffect(workArticlesContainer);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     projectsContainer = document.getElementById('projects-container');
+    workArticlesContainer = document.getElementById('work-articles-container');
 
     try {
         const data = await fetchData('data.json');
@@ -87,6 +122,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderProjects(data);
         } else {
             displayMessage(projectsContainer, 'No projects found.');
+        }
+
+        if (data && data.articles && data.articles.length > 0) {
+            renderWorkArticles(data);
+        } else if (workArticlesContainer) {
+            displayMessage(workArticlesContainer, 'No articles found.');
         }
 
         renderLayersGallery(data);

@@ -83,6 +83,15 @@
             "/assets/visuals/05.webp"
         ]
     },
+    "articles": [
+        {
+            "slug": "lab-thinking-out-loud",
+            "title": "Lab : Thinking Out Loud, in Code",
+            "listTitle": "Lab : Thinking Out Loud, in Code",
+            "date": "2026-01",
+            "thumbnail": "/assets/work/thumbnails/lab-thumbnail.webp"
+        }
+    ],
     "externalLinks": [
         {
             "name": "Writings",

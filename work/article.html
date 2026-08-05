@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreeram K / Work</title>
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/work/styles.css">
+    <style>
+        body {
+            animation: pageLoad 0.35s cubic-bezier(0.4, 0, 0.2, 1.2);
+        }
+        @keyframes pageLoad {
+            0% { filter: blur(24px); opacity: 0; }
+            25% { filter: blur(18px); opacity: 0.2; }
+            50% { filter: blur(12px); opacity: 0.4; }
+            75% { filter: blur(6px); opacity: 0.8; }
+            90% { filter: blur(3px); opacity: 0.9; }
+            100% { filter: none; opacity: 1; }
+        }
+        #main-container {
+            width: 612px;
+            max-width: 620px;
+        }
+        @media screen and (max-width: 640px) {
+            #main-container {
+                box-sizing: border-box;
+                width: 100%;
+                max-width: 100vw;
+                padding: 2.5rem 1.25rem 4rem;
+            }
+        }
+    </style>
+    <link rel="preload" href="/module-scripts/animations.js" as="script" crossorigin>
+
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LHV4PC8ED5"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LHV4PC8ED5');
+    </script>
+</head>
+<body>
+    <div id="main-container">
+        <aside class="home-link-aside work-aside-fixed animated-item">
+            <a href="/" class="topic-item home-link" style="font-style: italic; display: flex; align-items: center; gap: 0.4rem;">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 4L1.5 8M1.5 8L5.5 12M1.5 8H10C11.3807 8 12.5 6.88071 12.5 5.5V5.5C12.5 4.11929 11.3807 3 10 3H8.5" stroke="currentColor"></path></svg>
+                Back
+            </a>
+        </aside>
+        <div class="section-container">
+            <div class="intro-content animated-item" style="padding-bottom: 2rem;">
+                <h1 id="section-title" class="work-article-title"></h1>
+                <div class="subtitle-container">
+                    <p class="subtitle work-article-subtitle"></p>
+                </div>
+            </div>
+            <article id="work-article-container" class="work-article-container">
+                <!-- Content will be injected by work.js -->
+            </article>
+        </div>
+    </div>
+    <div class="bottom-fade"></div>
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+        <img id="lightbox-img" src="" alt="">
+        <video id="lightbox-video" autoplay loop muted playsinline></video>
+        <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close image view"></button>
+    </div>
+    <script src="/module-scripts/work.js" type="module"></script>
+</body>
+</html>
