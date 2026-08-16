@@ -78,12 +78,12 @@ function renderProjects(data) {
     setupHoverEffect(projectsContainer);
 }
 
-function renderWorkArticles(data) {
+function renderHomeWorkItems(workItems) {
     if (!workArticlesContainer) return;
 
     const fragment = document.createDocumentFragment();
 
-    data.articles.forEach((article) => {
+    workItems.forEach((article) => {
         const articleWrapper = document.createElement('div');
         articleWrapper.className = 'project-item-wrapper animated-item';
 
@@ -97,7 +97,11 @@ function renderWorkArticles(data) {
 
         const articleLink = document.createElement('a');
         articleLink.className = 'topic-item';
-        articleLink.href = `/work/article.html?article=${article.slug}`;
+        articleLink.href = article.link || `/work/article.html?article=${article.slug}`;
+        if (article.openInNewTab) {
+            articleLink.target = '_blank';
+            articleLink.rel = 'noopener noreferrer';
+        }
         articleLink.textContent = article.listTitle || article.title;
 
         articleWrapper.appendChild(articleLink);
@@ -124,10 +128,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             displayMessage(projectsContainer, 'No projects found.');
         }
 
-        if (data && data.articles && data.articles.length > 0) {
-            renderWorkArticles(data);
+        const homeWorkItems = Array.isArray(data?.work)
+            ? data.work.filter((item) => item.showOnHome === true)
+            : [];
+
+        if (homeWorkItems.length > 0) {
+            renderHomeWorkItems(homeWorkItems);
         } else if (workArticlesContainer) {
-            displayMessage(workArticlesContainer, 'No articles found.');
+            displayMessage(workArticlesContainer, 'No work found.');
         }
 
         renderLayersGallery(data);

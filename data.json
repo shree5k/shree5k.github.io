@@ -83,13 +83,42 @@
             "/assets/visuals/05.webp"
         ]
     },
-    "articles": [
+    "work": [
+        {
+            "slug": "television",
+            "title": "Television : AI Design Playground at JioHotstar",
+            "listTitle": "Television : AI Design Playground at JioHotstar",
+            "date": "2026-08",
+            "thumbnail": "/assets/work/thumbnails/television-1.webp",
+            "showOnHome": false
+        },
         {
             "slug": "lab-thinking-out-loud",
             "title": "Lab : Thinking Out Loud, in Code",
             "listTitle": "Lab : Thinking Out Loud, in Code",
             "date": "2026-01",
-            "thumbnail": "/assets/work/thumbnails/lab-thumbnail.webp"
+            "thumbnail": "/assets/work/thumbnails/lab-1.webp",
+            "showOnHome": true
+        },
+        {
+            "title": "Gravity Design System",
+            "listTitle": "Gravity Design System",
+            "date": "2024-02",
+            "thumbnail": "/assets/work/thumbnails/rupeek.mp4",
+            "link": "https://www.figma.com/proto/6Br1RZVFXiLeDLnkEetqZd/Shreeram-K---Portfolio---2023?page-id=0%3A1&node-id=1-6135&viewport=740%2C237%2C0.05&t=Rl7uEz4LQPw9w0n1-8&scaling=scale-down&content-scaling=fixed&hide-ui=1",
+            "openInNewTab": true,
+            "layout": "half",
+            "showOnHome": false
+        },
+        {
+            "title": "Humanising Gold Release at Rupeek",
+            "listTitle": "Humanising Gold Release at Rupeek",
+            "date": "2024-02",
+            "thumbnail": "/assets/work/thumbnails/loan-management.webp",
+            "link": "https://www.figma.com/proto/6Br1RZVFXiLeDLnkEetqZd/Shreeram-K---Portfolio---2023?page-id=30%3A2628&node-id=52-5706&viewport=587%2C315%2C0.03&t=Zmq7XACemqMj0IEq-8&scaling=scale-down&content-scaling=fixed&starting-point-node-id=52%3A5706&hide-ui=1",
+            "openInNewTab": true,
+            "layout": "half",
+            "showOnHome": false
         }
     ],
     "externalLinks": [

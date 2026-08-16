@@ -6,16 +6,27 @@ const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightbox-img");
 const lightboxVideo = document.getElementById("lightbox-video");
 const lightboxClose = document.getElementById("lightbox-close");
+let activeInlineVideo = null;
+let shouldResumeInlineVideo = false;
+let lightboxResetTimeout = null;
 
 function getArticleSlugFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get("article") || ARTICLE_DEFAULT;
 }
 
+function setupArticleBackLink() {
+  const backLink = document.getElementById("article-back-link");
+  if (!backLink) return;
+
+  const params = new URLSearchParams(window.location.search);
+  backLink.href = params.get("from") === "work" ? "/work" : "/";
+}
+
 // ── Inline markdown formatting ──────────────────────────────────────
-// Converts **bold** → <strong>, *italic* → <em>
+// Converts **strong text** → <strong>, *italic* → <em>
 // Escapes HTML first to prevent injection
-function formatInlineMarkdown(text) {
+function formatInlineMarkdown(text, { highlightStrong = false } = {}) {
   // Escape HTML entities
   let html = text
     .replace(/&/g, "&amp;")
@@ -29,14 +40,26 @@ function formatInlineMarkdown(text) {
     return `<a href="${url}"${target}>${label}</a>`;
   });
 
-  // Bold: **text**
-  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  // Strong text: **text**; paragraphs use the existing highlight treatment.
+  html = html.replace(
+    /\*\*(.+?)\*\*/g,
+    highlightStrong ? '<mark class="work-highlight">$1</mark>' : "<strong>$1</strong>"
+  );
 
   // Italic: *text* (but not inside **)
   html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
 
   // Highlight: ==text==
   html = html.replace(/==(.+?)==/g, '<mark class="work-highlight">$1</mark>');
+
+  // Inline code: `code`
+  html = html.replace(/`([^`]+)`/g, '<code class="work-inline-code">$1</code>');
+
+  // File references: [path/to/file.ext]
+  html = html.replace(
+    /\[([A-Za-z0-9_./-]+)\]/g,
+    '<code class="work-inline-code">$1</code>'
+  );
 
   return html;
 }
@@ -50,6 +73,8 @@ function parseMarkdownToBlocks(markdown) {
   let paragraphLines = [];
   let mediaBuffer = []; // collect consecutive media lines
   let statBuffer = []; // collect consecutive :: stat lines
+  let listBuffer = null;
+  let codeBlock = null;
 
   function flushParagraph() {
     if (!paragraphLines.length) return;
@@ -74,6 +99,18 @@ function parseMarkdownToBlocks(markdown) {
     statBuffer = [];
   }
 
+  function flushList() {
+    if (!listBuffer) return;
+    blocks.push(listBuffer);
+    listBuffer = null;
+  }
+
+  function flushCodeBlock() {
+    if (!codeBlock) return;
+    blocks.push(codeBlock);
+    codeBlock = null;
+  }
+
   function parseMediaLine(line) {
     const match = line.match(/^!\[(.*?)\]\((.*?)\)$/);
     if (!match) return null;
@@ -94,11 +131,35 @@ function parseMarkdownToBlocks(markdown) {
   for (const rawLine of lines) {
     const line = rawLine.trim();
 
+    if (codeBlock) {
+      if (/^```\s*$/.test(line)) {
+        flushCodeBlock();
+      } else {
+        codeBlock.code.push(rawLine);
+      }
+      continue;
+    }
+
+    const codeFence = line.match(/^```([a-z0-9+-]*)\s*$/i);
+    if (codeFence) {
+      flushParagraph();
+      flushMedia();
+      flushStats();
+      flushList();
+      codeBlock = {
+        type: "code",
+        language: codeFence[1].toLowerCase(),
+        code: [],
+      };
+      continue;
+    }
+
     // Blank line → flush everything
     if (!line) {
       flushParagraph();
       flushMedia();
       flushStats();
+      flushList();
       continue;
     }
 
@@ -106,6 +167,7 @@ function parseMarkdownToBlocks(markdown) {
     const media = parseMediaLine(line);
     if (media) {
       flushParagraph();
+      flushList();
       mediaBuffer.push(media);
       continue;
     }
@@ -113,6 +175,33 @@ function parseMarkdownToBlocks(markdown) {
     // If we had media buffered and this isn't a media line, flush media first
     flushMedia();
     if (!line.startsWith(":: ")) flushStats();
+
+    const listContinuation = rawLine.match(/^\s{2,}(.+)$/);
+    if (listBuffer && listContinuation) {
+      listBuffer.items[listBuffer.items.length - 1].continuation.push(listContinuation[1].trim());
+      continue;
+    }
+
+    const orderedListItem = line.match(/^\d+\.\s+(.+)$/);
+    const unorderedListItem = line.match(/^[-*+]\s+(.+)$/);
+    if (orderedListItem || unorderedListItem) {
+      flushParagraph();
+      const type = orderedListItem ? "ordered-list" : "unordered-list";
+      if (!listBuffer || listBuffer.type !== type) {
+        flushList();
+        listBuffer = { type, items: [] };
+      }
+      listBuffer.items.push({
+        text: (orderedListItem || unorderedListItem)[1],
+        continuation: [],
+      });
+      if (orderedListItem && listBuffer.items.length === 1) {
+        listBuffer.start = Number(line.match(/^(\d+)\./)[1]);
+      }
+      continue;
+    }
+
+    flushList();
 
     // Headings (check longest prefix first)
     if (line.startsWith("### ")) {
@@ -166,6 +255,8 @@ function parseMarkdownToBlocks(markdown) {
   flushParagraph();
   flushMedia();
   flushStats();
+  flushList();
+  flushCodeBlock();
   return blocks;
 }
 
@@ -207,6 +298,10 @@ function createMediaElement(block) {
 
 function openImageLightbox(src, alt) {
   if (!lightbox || !lightboxImg || !lightboxVideo) return;
+  if (lightboxResetTimeout) {
+    window.clearTimeout(lightboxResetTimeout);
+    lightboxResetTimeout = null;
+  }
   lightboxVideo.pause();
   lightboxVideo.removeAttribute("src");
   lightboxVideo.load();
@@ -219,33 +314,114 @@ function openImageLightbox(src, alt) {
   document.body.classList.add("lightbox-open");
 }
 
-function openVideoLightbox(src, alt) {
+function setVideoLightboxTransitionOrigin(inlineVideo) {
+  const inlineRect = inlineVideo.getBoundingClientRect();
+  const lightboxRect = lightboxVideo.getBoundingClientRect();
+  if (!inlineRect.width || !inlineRect.height || !lightboxRect.width || !lightboxRect.height) return;
+
+  const inlineCenterX = inlineRect.left + inlineRect.width / 2;
+  const inlineCenterY = inlineRect.top + inlineRect.height / 2;
+  const lightboxCenterX = lightboxRect.left + lightboxRect.width / 2;
+  const lightboxCenterY = lightboxRect.top + lightboxRect.height / 2;
+  const scale = Math.min(inlineRect.width / lightboxRect.width, inlineRect.height / lightboxRect.height);
+
+  lightboxVideo.style.setProperty("--lightbox-origin-x", `${inlineCenterX - lightboxCenterX}px`);
+  lightboxVideo.style.setProperty("--lightbox-origin-y", `${inlineCenterY - lightboxCenterY}px`);
+  lightboxVideo.style.setProperty("--lightbox-origin-scale", String(scale));
+  lightboxVideo.classList.add("lightbox-video-transition");
+}
+
+function resetLightboxMedia() {
+  lightboxResetTimeout = null;
+  lightboxImg.src = "";
+  lightboxImg.alt = "";
+  lightboxImg.style.display = "";
+  lightboxVideo.controls = false;
+  lightboxVideo.removeAttribute("src");
+  lightboxVideo.removeAttribute("aria-label");
+  lightboxVideo.style.display = "none";
+  lightboxVideo.classList.remove("lightbox-video-transition");
+  lightboxVideo.style.removeProperty("--lightbox-origin-x");
+  lightboxVideo.style.removeProperty("--lightbox-origin-y");
+  lightboxVideo.style.removeProperty("--lightbox-origin-scale");
+  lightboxVideo.load();
+}
+
+async function openVideoLightbox(inlineVideo) {
   if (!lightbox || !lightboxImg || !lightboxVideo) return;
+  if (lightboxResetTimeout) {
+    window.clearTimeout(lightboxResetTimeout);
+    lightboxResetTimeout = null;
+  }
+  const startTime = inlineVideo.currentTime;
+  activeInlineVideo = inlineVideo;
+  shouldResumeInlineVideo = !inlineVideo.paused && !inlineVideo.ended;
+  inlineVideo.pause();
+
   lightboxImg.style.display = "none";
   lightboxImg.src = "";
   lightboxImg.alt = "";
   lightboxVideo.style.display = "";
-  lightboxVideo.src = src;
-  lightboxVideo.setAttribute("aria-label", alt || "");
-  lightbox.classList.add("active");
-  lightbox.setAttribute("aria-hidden", "false");
-  document.body.classList.add("lightbox-open");
-  lightboxVideo.play().catch(() => {});
+  lightboxVideo.muted = true;
+  lightboxVideo.controls = true;
+  lightboxVideo.loop = inlineVideo.loop;
+  lightboxVideo.src = inlineVideo.currentSrc || inlineVideo.src;
+  lightboxVideo.setAttribute("aria-label", inlineVideo.getAttribute("aria-label") || "");
+
+  await new Promise((resolve) => {
+    if (lightboxVideo.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      resolve();
+      return;
+    }
+    lightboxVideo.addEventListener("loadedmetadata", resolve, { once: true });
+    lightboxVideo.addEventListener("error", resolve, { once: true });
+    lightboxVideo.addEventListener("emptied", resolve, { once: true });
+  });
+
+  if (activeInlineVideo !== inlineVideo || lightboxVideo.readyState < HTMLMediaElement.HAVE_METADATA) return;
+  lightboxVideo.currentTime = startTime;
+  setVideoLightboxTransitionOrigin(inlineVideo);
+
+  requestAnimationFrame(() => {
+    if (activeInlineVideo !== inlineVideo) return;
+    lightbox.classList.add("active");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.classList.add("lightbox-open");
+    if (shouldResumeInlineVideo) {
+      lightboxVideo.play().catch(() => {});
+    }
+  });
 }
 
 function closeLightbox() {
   if (!lightbox || !lightboxImg || !lightboxVideo) return;
+  const inlineVideo = activeInlineVideo;
+  const playbackTime = lightboxVideo.currentTime;
+  const shouldResume = shouldResumeInlineVideo;
+  const shouldAnimateVideoClose = lightboxVideo.classList.contains("lightbox-video-transition");
+
   lightbox.classList.remove("active");
   lightbox.setAttribute("aria-hidden", "true");
   document.body.classList.remove("lightbox-open");
-  lightboxImg.src = "";
-  lightboxImg.alt = "";
-  lightboxImg.style.display = "";
   lightboxVideo.pause();
-  lightboxVideo.removeAttribute("src");
-  lightboxVideo.removeAttribute("aria-label");
-  lightboxVideo.load();
-  lightboxVideo.style.display = "none";
+
+  activeInlineVideo = null;
+  shouldResumeInlineVideo = false;
+  if (inlineVideo && Number.isFinite(playbackTime)) {
+    inlineVideo.currentTime = playbackTime;
+  }
+  if (inlineVideo) {
+    inlineVideo.muted = true;
+  }
+  if (inlineVideo && shouldResume) {
+    inlineVideo.play().catch(() => {});
+  }
+
+  if (shouldAnimateVideoClose) {
+    lightboxResetTimeout = window.setTimeout(resetLightboxMedia, 300);
+  } else {
+    resetLightboxMedia();
+  }
 }
 
 function setupArticleImageLightbox(container) {
@@ -260,7 +436,7 @@ function setupArticleImageLightbox(container) {
       }
 
       if (element.tagName === "VIDEO") {
-        openVideoLightbox(element.currentSrc || element.src, element.getAttribute("aria-label") || "");
+        openVideoLightbox(element);
       }
     });
   });
@@ -282,9 +458,45 @@ function renderBlock(block, container) {
     }
     case "paragraph": {
       const el = document.createElement("p");
-      el.className = "work-article-paragraph";
-      el.innerHTML = formatInlineMarkdown(block.text);
+      const isSectionSubtext = /^\*\*.+\*\*$/.test(block.text);
+      el.className = isSectionSubtext
+        ? "work-article-paragraph work-article-section-subtext"
+        : "work-article-paragraph";
+      el.innerHTML = formatInlineMarkdown(block.text, {
+        highlightStrong: !isSectionSubtext,
+      });
       container.appendChild(el);
+      break;
+    }
+    case "ordered-list":
+    case "unordered-list": {
+      const list = document.createElement(block.type === "ordered-list" ? "ol" : "ul");
+      list.className = "work-article-list";
+      if (block.type === "ordered-list" && block.start > 1) {
+        list.start = block.start;
+      }
+      block.items.forEach((item) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = formatInlineMarkdown(item.text);
+        if (item.continuation.length) {
+          const description = document.createElement("span");
+          description.className = "work-article-list-description";
+          description.innerHTML = formatInlineMarkdown(item.continuation.join(" "));
+          listItem.appendChild(description);
+        }
+        list.appendChild(listItem);
+      });
+      container.appendChild(list);
+      break;
+    }
+    case "code": {
+      const pre = document.createElement("pre");
+      pre.className = "work-code-block";
+      const code = document.createElement("code");
+      code.className = block.language ? `language-${block.language}` : "";
+      code.textContent = block.code.join("\n");
+      pre.appendChild(code);
+      container.appendChild(pre);
       break;
     }
     case "media": {
@@ -331,6 +543,14 @@ function renderBlock(block, container) {
       break;
     }
   }
+}
+
+function highlightCodeBlocks(container) {
+  if (!window.hljs || !container) return;
+  container.querySelectorAll(".work-code-block code").forEach((code) => {
+    if (code.dataset.highlighted) return;
+    window.hljs.highlightElement(code);
+  });
 }
 
 // ── Section index ───────────────────────────────────────────────────
@@ -420,6 +640,7 @@ async function loadArticle() {
     // Render blocks
     container.innerHTML = "";
     blocks.forEach((block) => renderBlock(block, container));
+    highlightCodeBlocks(container);
     setupArticleImageLightbox(container);
 
   } catch (error) {
@@ -435,6 +656,8 @@ async function loadArticle() {
 // ── Init ────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", async () => {
+  setupArticleBackLink();
+
   if (lightbox) {
     lightbox.addEventListener("click", (event) => {
       if (event.target === lightbox) {
@@ -466,4 +689,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       el.classList.add("visible");
     });
   }, 400);
+});
+
+window.addEventListener("load", () => {
+  highlightCodeBlocks(document.getElementById("work-article-container"));
 });

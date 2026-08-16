@@ -4,16 +4,18 @@ Each article is a single `.md` file in this folder. The page at `article.html` r
 
 ## Creating a new article
 
-1. Create a file like `my-new-article.md` in `work/`.
-2. Add a link to it in `work/index.html` inside the `.hover-effect-container`:
+1. Create a file like `my-new-article.md` in `work/thoughts/`.
+2. Add its metadata to the `work` array in `/data.json`. Set `showOnHome` to `true` to also show it on the homepage; omit it or set it to `false` to keep it only in the full work list.
 
-```html
-<a href="/work/article.html?article=my-new-article" class="topic-item animated-item">
-    <div class="link-content">
-        <span class="title">Article Title</span>
-        <span class="description">Short description</span>
-    </div>
-</a>
+```json
+{
+  "slug": "my-new-article",
+  "title": "Article Title",
+  "listTitle": "Article Title",
+  "date": "2026-08",
+  "thumbnail": "/assets/work/thumbnails/my-new-article.webp",
+  "showOnHome": true
+}
 ```
 
 3. Visit `/work/article.html?article=my-new-article`.
@@ -38,6 +40,26 @@ Regular paragraph text.
 ```
 
 Consecutive lines (no blank line between) merge into one paragraph. Separate paragraphs with a blank line.
+
+### Lists
+
+```md
+- Unordered item
+- Another unordered item
+
+1. Ordered item
+2. Another ordered item
+```
+
+### Code blocks
+
+Use fenced code blocks with an optional language for syntax highlighting:
+
+````md
+```js
+const message = 'Hello';
+```
+````
 
 ## Adding media
 

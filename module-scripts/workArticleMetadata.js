@@ -16,8 +16,12 @@ export function getArticlePath(slug) {
   return `/work/thoughts/${slug}.md`;
 }
 
-export function getArticleUrl(slug) {
-  return `/work/article.html?article=${slug}`;
+export function getArticleUrl(slug, source = "") {
+  const params = new URLSearchParams({ article: slug });
+  if (source === "work") {
+    params.set("from", "work");
+  }
+  return `/work/article.html?${params.toString()}`;
 }
 
 function parseFrontmatterValue(rawValue) {
@@ -95,10 +99,13 @@ function formatHomeDateLabel(dateValue) {
 }
 
 function decorateArticleMetadata(article = {}) {
+  const externalUrl = article.link || "";
+
   return {
     ...article,
     listTitle: article.listTitle || article.title || "",
-    articleUrl: article.slug ? getArticleUrl(article.slug) : "",
+    articleUrl: externalUrl || (article.slug ? getArticleUrl(article.slug) : ""),
+    isExternal: Boolean(externalUrl),
     dateIsoMonth: article.date || "",
     articleDateLabel: formatDateLabel(article.date, ARTICLE_DATE_FORMATTER),
     cardDateLabel: formatDateLabel(article.date, CARD_DATE_FORMATTER),
@@ -122,8 +129,8 @@ export async function fetchSiteData() {
 
 export async function fetchArticlesMetadata() {
   const data = await fetchSiteData();
-  return Array.isArray(data.articles)
-    ? data.articles.map((article) => decorateArticleMetadata(article))
+  return Array.isArray(data.work)
+    ? data.work.map((article) => decorateArticleMetadata(article))
     : [];
 }
 
