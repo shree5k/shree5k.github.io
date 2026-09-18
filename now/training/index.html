@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Training</title>
+
+  <style>
+    :root {
+      --bg: #f5f5f2;
+      --surface: #ffffff;
+      --surface-2: #f0f0ec;
+      --text: #171717;
+      --muted: #737373;
+      --border: #deded8;
+      --accent: #171717;
+      --success: #2f6b45;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 12px 0 80px;
+    }
+
+    /* Sticky day navigation */
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      margin: 42px 0 16px;
+    }
+
+    .section-heading h2 {
+      font-size: 22px;
+      margin: 0;
+      letter-spacing: -0.025em;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .week {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+      margin-bottom: 24px;
+      padding: 6px;
+      background: color-mix(in srgb, var(--bg) 90%, transparent);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .day {
+      position: relative;
+      min-height: 68px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 8px 4px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .day:hover {
+      background: var(--surface);
+    }
+
+    .day.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .day.completed {
+      background: #e9f3eb;
+    }
+
+    .day.completed.active {
+      background: var(--accent);
+    }
+
+    .day-name {
+      text-align: center;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .day.active .day-name {
+      color: white;
+    }
+
+    .day-title {
+      display: block;
+      margin-top: 6px;
+      overflow: hidden;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.15;
+      text-overflow: ellipsis;
+    }
+
+    .day-type {
+      display: block;
+      margin-top: 3px;
+      overflow: hidden;
+      color: var(--muted);
+      text-align: center;
+      font-size: 9px;
+      line-height: 1.1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .day.active .day-title,
+    .day.active .day-type {
+      color: white;
+    }
+
+    .day-check {
+      position: absolute;
+      right: 5px;
+      top: 4px;
+      width: 12px;
+      height: 12px;
+      border: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 9px;
+    }
+
+    .day.completed .day-check {
+      background: var(--success);
+      color: white;
+      border-color: var(--success);
+    }
+
+    /* Workout area */
+    .workout-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+      gap: 18px;
+      margin-top: 0;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .workout-card {
+      overflow: hidden;
+    }
+
+    .workout-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .workout-kicker {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .workout-title {
+      margin: 6px 0 0;
+      font-size: 28px;
+      letter-spacing: -0.04em;
+    }
+
+    .workout-description {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .exercise-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exercise {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 17px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .exercise:last-child {
+      border-bottom: 0;
+    }
+
+    .exercise input {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .exercise-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .exercise-meta {
+      margin-top: 3px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .exercise-target {
+      font-size: 13px;
+      white-space: nowrap;
+      color: var(--muted);
+    }
+
+    .exercise.done .exercise-name {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    /* Sidebar */
+    .side-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .side-card {
+      padding: 22px;
+    }
+
+    .side-card h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .side-card p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .rule {
+      margin-top: 16px;
+      padding: 13px 14px;
+      background: var(--surface-2);
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .rule strong {
+      color: var(--text);
+    }
+
+    .todo-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .todo-form input {
+      min-width: 0;
+      flex: 1;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--surface);
+    }
+
+    .todo-form button,
+    .todo-delete {
+      border: 0;
+      border-radius: 9px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+    }
+
+    .todo-form button {
+      padding: 9px 11px;
+      font-weight: 700;
+    }
+
+    .todo-list {
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      background: var(--surface-2);
+      font-size: 13px;
+    }
+
+    .todo-item label {
+      display: flex;
+      min-width: 0;
+      flex: 1;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+    }
+
+    .todo-item span {
+      overflow-wrap: anywhere;
+    }
+
+    .todo-item.completed span {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .todo-delete {
+      width: 24px;
+      height: 24px;
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    /* Protein calculator */
+    .protein-calculator {
+      margin-top: 42px;
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .protein-calculator-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .protein-calculator h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .protein-calculator p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .protein-total {
+      text-align: right;
+    }
+
+    .protein-total-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .protein-status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .protein-progress {
+      height: 8px;
+      margin: 18px 0 20px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: var(--surface-2);
+    }
+
+    .protein-progress-bar {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 0.2s ease;
+    }
+
+    .protein-progress-bar.met {
+      background: var(--success);
+    }
+
+    .protein-entries {
+      display: grid;
+      gap: 8px;
+    }
+
+    .protein-entry {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr) 100px auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 11px;
+      background: var(--surface-2);
+      font-size: 13px;
+    }
+
+    .protein-entry-name small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .protein-entry input {
+      width: 100%;
+      padding: 7px 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .protein-entry-result {
+      min-width: 48px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .protein-entry-serving {
+      grid-template-columns: 20px minmax(0, 1fr) auto;
+    }
+
+    .protein-entry.disabled {
+      opacity: 0.55;
+    }
+
+    .protein-enable {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .protein-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* Principles */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .principles-section {
+      margin-top: 42px;
+    }
+
+    .principle {
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .principle-number {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .principle-title {
+      font-weight: 700;
+      margin-top: 24px;
+      font-size: 16px;
+    }
+
+    .principle-text {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    .footer {
+      margin-top: 36px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      .workout-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .principles {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        width: min(100% - 20px, 1180px);
+        padding-top: 12px;
+      }
+
+      .exercise {
+        grid-template-columns: 30px minmax(0, 1fr);
+      }
+
+      .exercise-target {
+        grid-column: 2;
+      }
+
+      .principles {
+        grid-template-columns: 1fr;
+      }
+
+      .protein-calculator-header {
+        align-items: end;
+        flex-direction: column;
+      }
+
+      .protein-total {
+        text-align: left;
+      }
+
+      .protein-entry {
+        grid-template-columns: 20px minmax(0, 1fr) 90px;
+      }
+
+      .protein-entry:not(.protein-entry-serving) .protein-entry-result {
+        grid-column: 2 / -1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <section>
+      <div class="week" id="weekGrid"></div>
+    </section>
+
+    <!-- Selected workout -->
+    <section id="workoutSection">
+      <div class="workout-panel">
+
+        <div class="card workout-card">
+          <div class="workout-header">
+            <div class="workout-kicker" id="workoutKicker"></div>
+            <div class="workout-title" id="workoutTitle"></div>
+            <p class="workout-description" id="workoutDescription"></p>
+          </div>
+
+          <div class="exercise-list" id="exerciseList"></div>
+        </div>
+
+        <div class="side-stack">
+
+          <div class="card side-card">
+            <h3>Progression rule</h3>
+
+            <p>
+              Your dumbbells are limited to 5 kg, so progression comes from
+              increasing reps first and then increasing difficulty.
+            </p>
+
+            <div class="rule">
+              <strong>8 → 10 → 12 → 15 reps</strong><br />
+              Once the top end becomes easy, move to a harder variation.
+            </div>
+
+            <div class="rule">
+              <strong>Most sets: 1–3 reps in reserve.</strong><br />
+              You don't need to destroy yourself every set.
+            </div>
+          </div>
+
+          <div class="card side-card">
+            <h3>To-do</h3>
+
+            <form class="todo-form" id="todoForm">
+              <input
+                id="todoInput"
+                type="text"
+                placeholder="Add a reminder"
+                aria-label="New to-do item"
+                maxlength="120"
+              />
+              <button type="submit">Add</button>
+            </form>
+
+            <ul class="todo-list" id="todoList" aria-live="polite"></ul>
+          </div>
+
+          <div class="card side-card">
+            <h3>Recovery</h3>
+
+            <p>
+              Aim for 7–9 hours of sleep and enough food to support gradual
+              weight and strength increases.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="protein-calculator" aria-labelledby="proteinCalculatorTitle">
+      <div class="protein-calculator-header">
+        <div>
+          <h2 id="proteinCalculatorTitle">Today’s protein</h2>
+          <p>120 g goal · select foods and log what you eat.</p>
+        </div>
+
+        <div class="protein-total">
+          <div class="protein-total-value"><span id="proteinTotal">25</span> g</div>
+          <div class="protein-status" id="proteinStatus">95 g remaining</div>
+        </div>
+      </div>
+
+      <div class="protein-progress" aria-hidden="true">
+        <div class="protein-progress-bar" id="proteinProgressBar"></div>
+      </div>
+
+      <div class="protein-entries" id="proteinEntries"></div>
+      <div class="protein-note">Estimates: whey 25 g per scoop; yogurt 3.5 g, chicken 31 g and paneer 18 g per 100 g; eggs 6.3 g each.</div>
+    </section>
+
+    <!-- Principles -->
+    <section class="principles-section">
+      <div class="principles">
+
+        <div class="principle">
+          <div class="principle-number">01</div>
+          <div class="principle-title">Progressive overload</div>
+          <div class="principle-text">
+            Do slightly more over time. More reps, harder variations or more load.
+          </div>
+        </div>
+
+        <div class="principle">
+          <div class="principle-number">02</div>
+          <div class="principle-title">Protein daily</div>
+          <div class="principle-text">
+            Aim around 1.6 g/kg/day as a practical muscle-building target.
+          </div>
+        </div>
+
+        <div class="principle">
+          <div class="principle-number">03</div>
+          <div class="principle-title">Don't chase exhaustion</div>
+          <div class="principle-text">
+            The goal is adaptation, not simply being destroyed after every workout.
+          </div>
+        </div>
+
+        <div class="principle">
+          <div class="principle-number">04</div>
+          <div class="principle-title">Upgrade when needed</div>
+          <div class="principle-text">
+            When 5 kg is no longer challenging, adjustable heavier dumbbells become the next upgrade.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="footer">
+      Your objective: get stronger, recover well and repeat consistently.
+    </div>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY = "muscleHealthPlan";
+    const TODO_STORAGE_KEY = "trainingTodos";
+    const PROTEIN_STORAGE_KEY = "trainingProteinCalculator";
+    const PROTEIN_GOAL = 120;
+    const PROTEIN_FOODS = {
+      whey: { label: "Whey protein", proteinPerItem: 25, itemLabel: "scoops", unitLabel: "scoop" },
+      yogurt: { label: "Yogurt", proteinPer100g: 3.5 },
+      eggs: { label: "Eggs", proteinPerItem: 6.3, itemLabel: "eggs", unitLabel: "egg" },
+      chicken: { label: "Chicken", proteinPer100g: 31 },
+      paneer: { label: "Paneer", proteinPer100g: 18 }
+    };
+
+    const schedule = [
+      {
+        id: "mon",
+        day: "Mon",
+        title: "Full Body A",
+        type: "Strength",
+        category: "strength",
+        kicker: "Monday · Strength",
+        description:
+          "Push, pull, legs and arms. Controlled reps with challenging form.",
+        exercises: [
+          ["Push-ups", "4 sets", "8–20 reps"],
+          ["1-arm dumbbell row", "4 sets / side", "10–20 reps"],
+          ["Bulgarian split squat", "3 sets / leg", "8–15 reps"],
+          ["Dumbbell Romanian deadlift", "3 sets", "10–20 reps"],
+          ["Lateral raise", "3 sets", "12–20 reps"],
+          ["Dumbbell curl", "2–3 sets", "10–20 reps"],
+          ["Triceps extension", "2–3 sets", "10–20 reps"]
+        ]
+      },
+      {
+        id: "tue",
+        day: "Tue",
+        title: "Easy Run",
+        type: "Cardio",
+        category: "run",
+        kicker: "Tuesday · Running",
+        description:
+          "25–35 minutes at conversational pace. Finish feeling like you could do more.",
+        exercises: [
+          ["Easy run", "1 session", "25–35 min"],
+          ["Cool down walk", "1 session", "5–10 min"]
+        ]
+      },
+      {
+        id: "wed",
+        day: "Wed",
+        title: "Full Body B",
+        type: "Strength",
+        category: "strength",
+        kicker: "Wednesday · Strength",
+        description:
+          "A second full-body stimulus with different movement variations.",
+        exercises: [
+          ["Dumbbell floor press", "4 sets", "8–20 reps"],
+          ["1-arm dumbbell row", "4 sets / side", "10–20 reps"],
+          ["Reverse lunge", "3 sets / leg", "8–15 reps"],
+          ["Dumbbell hip thrust / glute bridge", "3 sets", "12–20 reps"],
+          ["Dumbbell shoulder press", "3 sets", "8–15 reps"],
+          ["Hammer curl", "2–3 sets", "10–20 reps"],
+          ["Overhead triceps extension", "2–3 sets", "10–20 reps"]
+        ]
+      },
+      {
+        id: "thu",
+        day: "Thu",
+        title: "Rest",
+        type: "Recovery",
+        category: "rest",
+        kicker: "Thursday · Recovery",
+        description:
+          "No structured training. Walk, stretch lightly and recover.",
+        exercises: [
+          ["Walking", "Optional", "20–40 min"],
+          ["Light mobility", "Optional", "5–10 min"]
+        ]
+      },
+      {
+        id: "fri",
+        day: "Fri",
+        title: "Full Body C",
+        type: "Strength",
+        category: "strength",
+        kicker: "Friday · Strength",
+        description:
+          "Third weekly strength stimulus. Make the final reps challenging without sacrificing form.",
+        exercises: [
+          ["Feet-elevated push-up", "4 sets", "8–20 reps"],
+          ["1-arm dumbbell row", "4 sets / side", "10–20 reps"],
+          ["Goblet squat", "3 sets", "12–20 reps"],
+          ["Single-leg Romanian deadlift", "3 sets / leg", "10–15 reps"],
+          ["Rear-delt fly", "3 sets", "12–20 reps"],
+          ["Curl variation", "2–3 sets", "10–20 reps"],
+          ["Triceps variation", "2–3 sets", "10–20 reps"]
+        ]
+      },
+      {
+        id: "sat",
+        day: "Sat",
+        title: "Run",
+        type: "Cardio",
+        category: "run",
+        kicker: "Saturday · Running",
+        description:
+          "30–40 minutes easy/moderate. Keep the effort controlled so legs recover for next week.",
+        exercises: [
+          ["Run", "1 session", "30–40 min"],
+          ["Optional faster efforts", "4–6 efforts", "Short bursts only"]
+        ]
+      },
+      {
+        id: "sun",
+        day: "Sun",
+        title: "Rest",
+        type: "Recovery",
+        category: "rest",
+        kicker: "Sunday · Recovery",
+        description:
+          "Full recovery day. Eat well, sleep well and get ready for Monday.",
+        exercises: [
+          ["Recovery", "No workout", "Rest"],
+          ["Walking", "Optional", "20–40 min"]
+        ]
+      }
+    ];
+
+    const DAY_IDS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+
+    function getTodayDayId() {
+      return DAY_IDS[new Date().getDay()];
+    }
+
+    let state = {
+      selectedDay: getTodayDayId(),
+      completedDays: {},
+      completedExercises: {}
+    };
+
+    let todos = [];
+    let proteinEntries = { whey: 1 };
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (saved) {
+          state = {
+            ...state,
+            ...JSON.parse(saved),
+            selectedDay: getTodayDayId()
+          };
+        }
+      } catch (error) {
+        console.warn("Could not load saved state.", error);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadTodos() {
+      try {
+        const saved = localStorage.getItem(TODO_STORAGE_KEY);
+
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          todos = Array.isArray(parsed) ? parsed : [];
+        }
+      } catch (error) {
+        console.warn("Could not load saved to-dos.", error);
+      }
+    }
+
+    function saveTodos() {
+      localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
+    }
+
+    function loadProteinEntries() {
+      try {
+        const saved = localStorage.getItem(PROTEIN_STORAGE_KEY);
+
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          proteinEntries = parsed && typeof parsed === "object"
+            ? { ...proteinEntries, ...parsed }
+            : proteinEntries;
+
+          if (proteinEntries.whey === true) proteinEntries.whey = 1;
+        }
+      } catch (error) {
+        console.warn("Could not load protein calculator.", error);
+      }
+    }
+
+    function saveProteinEntries() {
+      localStorage.setItem(PROTEIN_STORAGE_KEY, JSON.stringify(proteinEntries));
+    }
+
+    function getProteinTotal() {
+      return Object.entries(proteinEntries).reduce((total, [id, quantity]) => {
+        const food = PROTEIN_FOODS[id];
+        if (quantity === false) return total;
+        if (!food) return total;
+        if (food.proteinPerServing) return total + food.proteinPerServing;
+        if (food.proteinPerItem) return total + (Number(quantity) || 0) * food.proteinPerItem;
+        return total + (Number(quantity) || 0) * food.proteinPer100g / 100;
+      }, 0);
+    }
+
+    function updateProteinSummary() {
+      const total = getProteinTotal();
+      const roundedTotal = Math.round(total * 10) / 10;
+      const remaining = Math.max(0, PROTEIN_GOAL - total);
+      const met = total >= PROTEIN_GOAL;
+      const bar = document.getElementById("proteinProgressBar");
+
+      document.getElementById("proteinTotal").textContent = roundedTotal;
+      document.getElementById("proteinStatus").textContent = met
+        ? "Goal met"
+        : `${Math.ceil(remaining)} g remaining`;
+      bar.style.width = `${Math.min(total / PROTEIN_GOAL * 100, 100)}%`;
+      bar.classList.toggle("met", met);
+    }
+
+    function renderProteinCalculator() {
+      const entries = document.getElementById("proteinEntries");
+      entries.replaceChildren();
+
+      Object.entries(PROTEIN_FOODS).forEach(([id, food]) => {
+        const selected = Object.hasOwn(proteinEntries, id) && proteinEntries[id] !== false;
+
+        const entry = document.createElement("div");
+        entry.className = `protein-entry${selected ? "" : " disabled"}`;
+
+        const enabled = document.createElement("input");
+        enabled.className = "protein-enable";
+        enabled.type = "checkbox";
+        enabled.checked = selected;
+        enabled.setAttribute("aria-label", `Include ${food.label}`);
+        enabled.addEventListener("change", () => {
+          if (enabled.checked) {
+            proteinEntries[id] = id === "whey" ? 1 : 0;
+          } else if (id === "whey") {
+            proteinEntries[id] = false;
+          } else {
+            delete proteinEntries[id];
+          }
+
+          saveProteinEntries();
+          renderProteinCalculator();
+        });
+
+        const name = document.createElement("div");
+        name.className = "protein-entry-name";
+        const detail = food.proteinPerServing
+          ? `${food.proteinPerServing} g protein per serving`
+          : food.proteinPerItem
+            ? `${food.proteinPerItem} g protein per ${food.unitLabel}`
+            : `${food.proteinPer100g} g protein per 100 g`;
+        name.innerHTML = `<strong>${food.label}</strong><small>${detail}</small>`;
+
+        const proteinAmount = () => {
+          if (!selected) return 0;
+          if (food.proteinPerServing) return food.proteinPerServing;
+          if (food.proteinPerItem) return (Number(proteinEntries[id]) || 0) * food.proteinPerItem;
+          return (Number(proteinEntries[id]) || 0) * food.proteinPer100g / 100;
+        };
+
+        const result = document.createElement("div");
+        result.className = "protein-entry-result";
+        result.textContent = `${Math.round(proteinAmount() * 10) / 10} g`;
+
+        if (food.proteinPerServing) {
+          entry.classList.add("protein-entry-serving");
+          entry.append(enabled, name, result);
+          entries.append(entry);
+          return;
+        }
+
+        const quantity = document.createElement("input");
+        quantity.type = "number";
+        quantity.min = "0";
+        quantity.step = "1";
+        quantity.inputMode = "numeric";
+        quantity.placeholder = food.itemLabel || "grams";
+        quantity.value = selected ? proteinEntries[id] : "";
+        quantity.disabled = !selected;
+        quantity.setAttribute("aria-label", `${food.label} ${food.itemLabel || "grams"}`);
+        quantity.addEventListener("input", () => {
+          proteinEntries[id] = Math.max(0, Number(quantity.value) || 0);
+          saveProteinEntries();
+          result.textContent = `${Math.round(proteinAmount() * 10) / 10} g`;
+          updateProteinSummary();
+        });
+
+        entry.append(enabled, name, quantity, result);
+        entries.append(entry);
+      });
+
+      updateProteinSummary();
+    }
+
+    function renderTodos() {
+      const list = document.getElementById("todoList");
+      list.replaceChildren();
+
+      todos.forEach(todo => {
+        const item = document.createElement("li");
+        item.className = `todo-item${todo.completed ? " completed" : ""}`;
+
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = todo.completed;
+        checkbox.addEventListener("change", () => {
+          todo.completed = checkbox.checked;
+          saveTodos();
+          renderTodos();
+        });
+
+        const text = document.createElement("span");
+        text.textContent = todo.text;
+        label.append(checkbox, text);
+
+        const removeButton = document.createElement("button");
+        removeButton.className = "todo-delete";
+        removeButton.type = "button";
+        removeButton.setAttribute("aria-label", `Remove ${todo.text}`);
+        removeButton.textContent = "×";
+        removeButton.addEventListener("click", () => {
+          todos = todos.filter(item => item.id !== todo.id);
+          saveTodos();
+          renderTodos();
+        });
+
+        item.append(label, removeButton);
+        list.append(item);
+      });
+    }
+
+    function setupTodoList() {
+      const form = document.getElementById("todoForm");
+      const input = document.getElementById("todoInput");
+
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        todos.push({ id: `${Date.now()}-${Math.random()}`, text, completed: false });
+        saveTodos();
+        renderTodos();
+        form.reset();
+        input.focus();
+      });
+    }
+
+    function getDayById(id) {
+      return schedule.find(day => day.id === id);
+    }
+
+    function renderWeek() {
+      const grid = document.getElementById("weekGrid");
+
+      grid.innerHTML = schedule
+        .map(day => {
+          const completed = !!state.completedDays[day.id];
+          const active = state.selectedDay === day.id;
+
+          return `
+            <div
+              class="day ${completed ? "completed" : ""} ${active ? "active" : ""}"
+              data-day="${day.id}"
+              role="button"
+              tabindex="0"
+            >
+              <div class="day-check">
+                ${completed ? "✓" : ""}
+              </div>
+
+              <div class="day-name">${day.day}</div>
+              <div class="day-title">${day.title}</div>
+              <div class="day-type">${day.type}</div>
+            </div>
+          `;
+        })
+        .join("");
+
+      document.querySelectorAll(".day").forEach(card => {
+        card.addEventListener("click", () => {
+          selectDay(card.dataset.day);
+        });
+
+        card.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectDay(card.dataset.day);
+          }
+        });
+      });
+    }
+
+    function renderWorkout() {
+      const day = getDayById(state.selectedDay);
+
+      document.getElementById("workoutKicker").textContent = day.kicker;
+      document.getElementById("workoutTitle").textContent = day.title;
+      document.getElementById("workoutDescription").textContent =
+        day.description;
+
+      const list = document.getElementById("exerciseList");
+
+      list.innerHTML = day.exercises
+        .map((exercise, index) => {
+          const key = `${day.id}-${index}`;
+          const checked = !!state.completedExercises[key];
+
+          return `
+            <label class="exercise ${checked ? "done" : ""}">
+              <input
+                type="checkbox"
+                data-exercise="${key}"
+                ${checked ? "checked" : ""}
+              />
+
+              <div>
+                <div class="exercise-name">${exercise[0]}</div>
+                <div class="exercise-meta">${exercise[1]}</div>
+              </div>
+
+              <div class="exercise-target">
+                ${exercise[2]}
+              </div>
+            </label>
+          `;
+        })
+        .join("");
+
+      document.querySelectorAll("[data-exercise]").forEach(input => {
+        input.addEventListener("change", event => {
+          const key = event.target.dataset.exercise;
+          state.completedExercises[key] = event.target.checked;
+
+          saveState();
+          renderWorkout();
+        });
+      });
+    }
+
+    function selectDay(id) {
+      state.selectedDay = id;
+      saveState();
+      renderWeek();
+      renderWorkout();
+    }
+
+    function autoCompleteDay(dayId) {
+      const day = getDayById(dayId);
+
+      const keys = day.exercises.map((_, index) => `${day.id}-${index}`);
+
+      const completedCount = keys.filter(
+        key => state.completedExercises[key]
+      ).length;
+
+      if (day.exercises.length && completedCount === day.exercises.length) {
+        state.completedDays[dayId] = true;
+      }
+    }
+
+    function setupDayCompletion() {
+      document.getElementById("weekGrid").addEventListener("dblclick", event => {
+        const day = event.target.closest(".day");
+
+        if (!day) return;
+
+        const id = day.dataset.day;
+        state.completedDays[id] = !state.completedDays[id];
+
+        saveState();
+        renderWeek();
+      });
+    }
+
+    loadState();
+    loadTodos();
+    loadProteinEntries();
+
+    /*
+      When all exercises for a strength/run day are checked,
+      that day is automatically marked complete.
+    */
+    document.addEventListener("change", event => {
+      if (!event.target.matches("[data-exercise]")) return;
+
+      const [dayId] = event.target.dataset.exercise.split("-");
+      autoCompleteDay(dayId);
+
+      saveState();
+      renderWeek();
+    });
+
+    setupDayCompletion();
+    setupTodoList();
+    renderWeek();
+    renderWorkout();
+    renderTodos();
+    renderProteinCalculator();
+  </script>
+</body>
+</html>
