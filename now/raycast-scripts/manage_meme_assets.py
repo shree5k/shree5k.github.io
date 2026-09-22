@@ -16,6 +16,8 @@ INDEX_FILE = os.path.join(SCRIPT_DIR, "..", "json", "search_index.json")
 PREFIX = "m_"
 MODEL = "gemma3"
 MAX_KEYWORDS = 10
+METADATA_FIELDS = ("reactions", "emotions", "scenarios", "subjects", "visual", "text")
+MAX_VALUES_PER_FIELD = 6
 MAX_WIDTH = 1200
 AVIF_QUALITY = 50
 JPEG_QUALITY = 85
@@ -112,6 +114,58 @@ def parse_keywords(raw_text):
     return " ".join(keywords[:MAX_KEYWORDS])
 
 
+def normalize_metadata_value(value):
+    """Return a compact, searchable phrase or an empty string."""
+    if not isinstance(value, str):
+        return ""
+    value = re.sub(r"\s+", " ", value.strip().lower())
+    return value[:120]
+
+
+def parse_metadata(raw_text):
+    """Parse the model's structured response without trusting its exact formatting."""
+    text = raw_text.strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text, flags=re.IGNORECASE)
+
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError:
+        return {}
+
+    if not isinstance(payload, dict):
+        return {}
+
+    metadata = {}
+    for field in METADATA_FIELDS:
+        values = payload.get(field, [])
+        if isinstance(values, str):
+            values = [values]
+        if not isinstance(values, list):
+            continue
+
+        cleaned = []
+        for value in values:
+            value = normalize_metadata_value(value)
+            if value and value not in cleaned:
+                cleaned.append(value)
+            if len(cleaned) == MAX_VALUES_PER_FIELD:
+                break
+        if cleaned:
+            metadata[field] = cleaned
+    return metadata
+
+
+def flatten_metadata(metadata):
+    """Keep the legacy kw field useful for older clients and simple tools."""
+    values = []
+    for field in METADATA_FIELDS:
+        for value in metadata.get(field, []):
+            if value not in values:
+                values.append(value)
+    return " ".join(values)
+
+
 def optimize_image(path):
     with Image.open(path) as img:
         img = img.convert("RGBA" if "A" in img.getbands() else "RGB")
@@ -139,20 +193,41 @@ def convert_to_avif(src_path, avif_path):
         img.save(avif_path, format="AVIF", quality=AVIF_QUALITY)
 
 
-def get_keywords_from_ai(image_path, filename):
+def get_metadata_from_ai(image_path, filename):
     prompt = f"""
-    Analyze this image and provide exactly {MAX_KEYWORDS} or fewer precise keywords.
-    Include: Objects, Text (start with 'text:'), Situational triggers (when...), and Vibe.
-    Return ONLY a comma-separated list. Max {MAX_KEYWORDS} keywords total.
+    Analyze this meme for someone searching for a reaction image to send in an everyday chat.
+    Return ONLY valid JSON, with these optional array fields: reactions, emotions,
+    scenarios, subjects, visual, text.
+
+    reactions: short, sendable phrases such as "this is awkward", "i cannot believe this",
+    "good for you", or "that is so me". Include natural search variations when useful.
+    emotions: concise feelings such as confused, excited, annoyed, embarrassed, disappointed.
+    scenarios: natural "when ..." situations where this is a good reply.
+    subjects: ONLY people, fictional characters, franchises, or public figures you can identify
+    confidently. Do not guess identities. Include a character and franchise separately when clear.
+    visual: expressions, actions, objects, or scene details that help identify the image. For
+    every clearly visible animal, include its common name (for example cat, dog, horse, bird,
+    or monkey); use "animal" only when its kind cannot be identified.
+    text: exact readable text visible in the image, if any.
+
+    Keep each array to {MAX_VALUES_PER_FIELD} specific, non-duplicate phrases or fewer. Avoid
+    generic labels, explanations, confidence notes, and invented text or identities.
     """
     try:
         response = ollama.generate(
-            model=MODEL, prompt=prompt, images=[image_path], stream=False
+            model=MODEL, prompt=prompt, images=[image_path], stream=False, format="json"
         )
-        return parse_keywords(response["response"])
+        metadata = parse_metadata(response["response"])
+        if metadata:
+            metadata["kw"] = flatten_metadata(metadata)
+            return metadata
+
+        # Older/local models sometimes ignore JSON mode. Preserve the former ingestion path.
+        keywords = parse_keywords(response["response"])
+        return {"kw": keywords} if keywords else {}
     except Exception as e:
         print(f"\n[!] Error analyzing {filename}: {e}")
-        return ""
+        return {}
 
 
 def migrate_legacy_names():
@@ -243,13 +318,13 @@ def process_pending(filename, index, m_id):
         os.rename(src_path, final_src)
         src_path = final_src
 
-    keywords = get_keywords_from_ai(src_path, os.path.basename(src_path))
-    if not keywords:
+    metadata = get_metadata_from_ai(src_path, os.path.basename(src_path))
+    if not metadata:
         print(f"\n[!] No keywords for {filename}; skipping index update.")
         return index, False
 
     convert_to_avif(src_path, avif_path)
-    index.append({"fn": avif_fn, "kw": keywords})
+    index.append({"fn": avif_fn, **metadata})
     save_index(index)
     return index, True
 

@@ -53,6 +53,42 @@
             if (imagesList.length) openFullView(Math.floor(Math.random() * imagesList.length));
         }
 
+        function normalizeSearchText(value) {
+            return (value || '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, ' ')
+                .trim();
+        }
+
+        function valuesForSearch(entry, field) {
+            const value = entry[field];
+            return Array.isArray(value) ? value : (typeof value === 'string' ? [value] : []);
+        }
+
+        function scoreSearchResult(entry, query) {
+            const normalizedQuery = normalizeSearchText(query);
+            const tokens = normalizedQuery.split(' ').filter(Boolean);
+            if (!tokens.length) return 0;
+
+            const fields = [
+                ['reactions', 8], ['subjects', 7], ['scenarios', 6],
+                ['emotions', 5], ['text', 4], ['visual', 2], ['kw', 1]
+            ];
+            let score = 0;
+            const searchableText = [];
+
+            for (const [field, weight] of fields) {
+                const text = normalizeSearchText(valuesForSearch(entry, field).join(' '));
+                if (!text) continue;
+                searchableText.push(text);
+                if (text.includes(normalizedQuery)) score += weight * 4;
+                score += tokens.filter(token => text.includes(token)).length * weight;
+            }
+
+            const combinedText = searchableText.join(' ');
+            return tokens.every(token => combinedText.includes(token)) ? score : 0;
+        }
+
         bindFortuneOpen({
             trigger: fortuneBtn,
             openRandom: openRandomFortune,
@@ -66,8 +102,17 @@
         });
 
         searchInput.addEventListener('input', e => {
-            const q = e.target.value.toLowerCase();
-            imagesList = masterIndex.filter(i => i.kw.includes(q)).map(i => i.fn);
+            const q = e.target.value;
+            if (!normalizeSearchText(q)) {
+                imagesList = masterIndex.map(i => i.fn);
+                distributeImages();
+                return;
+            }
+            imagesList = masterIndex
+                .map((entry, order) => ({ entry, order, score: scoreSearchResult(entry, q) }))
+                .filter(result => result.score > 0)
+                .sort((a, b) => b.score - a.score || a.order - b.order)
+                .map(result => result.entry.fn);
             distributeImages();
         });
 
