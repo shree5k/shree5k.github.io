@@ -303,6 +303,149 @@
       color: var(--text);
     }
 
+    .set-tracker {
+      display: grid;
+      gap: 12px;
+    }
+
+    .set-tracker-status {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .set-progress {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 4px 8px;
+    }
+
+    .set-progress::before {
+      content: "";
+      position: absolute;
+      top: 17px;
+      right: 17px;
+      left: 17px;
+      height: 2px;
+      background: var(--border);
+    }
+
+    .set-progress-circle {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .set-progress-circle.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: white;
+    }
+
+    .set-progress-circle.completed {
+      border-color: var(--success);
+      background: var(--success);
+      color: white;
+    }
+
+    .set-tracker-timer {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      text-align: center;
+    }
+
+    .set-tracker-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .set-tracker button {
+      flex: 1;
+      padding: 9px 11px;
+      border: 0;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .set-tracker-complete {
+      background: var(--accent);
+      color: white;
+    }
+
+    .set-tracker-complete:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .set-tracker-reset {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .timer-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: rgba(245, 245, 242, 0.78);
+      backdrop-filter: blur(6px);
+    }
+
+    .timer-modal[hidden] {
+      display: none;
+    }
+
+    .timer-modal-card {
+      width: min(620px, 100%);
+      padding: clamp(40px, 8vw, 76px) clamp(28px, 8vw, 72px);
+      border: 2px solid #171717;
+      border-top: 8px solid #171717;
+      border-radius: 24px;
+      background: #ffffff;
+      box-shadow: 0 24px 80px rgba(23, 23, 23, 0.16);
+      color: #171717;
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: center;
+    }
+
+    .timer-modal-card h2 {
+      margin: 0;
+      font-size: clamp(15px, 2vw, 20px);
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .timer-modal-status {
+      margin-top: 10px;
+      color: #737373;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .timer-modal-time {
+      margin: 28px 0 8px;
+      font-size: clamp(88px, 18vw, 160px);
+      font-weight: 900;
+      letter-spacing: -0.09em;
+      line-height: 0.9;
+    }
+
     .todo-form {
       display: flex;
       gap: 8px;
@@ -452,6 +595,12 @@
       border-radius: 11px;
       background: var(--surface-2);
       font-size: 13px;
+      cursor: pointer;
+    }
+
+    .protein-entry:hover,
+    .protein-entry:focus-visible {
+      background: var(--surface-3, var(--surface-2));
     }
 
     .protein-entry-name small {
@@ -611,11 +760,6 @@
           <div class="card side-card">
             <h3>Progression rule</h3>
 
-            <p>
-              Your dumbbells are limited to 5 kg, so progression comes from
-              increasing reps first and then increasing difficulty.
-            </p>
-
             <div class="rule">
               <strong>8 → 10 → 12 → 15 reps</strong><br />
               Once the top end becomes easy, move to a harder variation.
@@ -624,6 +768,25 @@
             <div class="rule">
               <strong>Most sets: 1–3 reps in reserve.</strong><br />
               You don't need to destroy yourself every set.
+            </div>
+          </div>
+
+          <div class="card side-card set-tracker">
+            <h3>Three-set timer</h3>
+            <div class="set-tracker-status" id="setTrackerStatus">Set 1 of 3</div>
+            <div class="set-progress" id="setProgress" aria-label="Set progress">
+              <div class="set-progress-circle active" data-set-circle="1">1</div>
+              <div class="set-progress-circle" data-set-circle="2">2</div>
+              <div class="set-progress-circle" data-set-circle="3">3</div>
+            </div>
+            <div class="set-tracker-timer" id="setTrackerTimer">Ready</div>
+            <div class="set-tracker-actions">
+              <button class="set-tracker-complete" id="setTrackerComplete" type="button">
+                Complete set 1
+              </button>
+              <button class="set-tracker-reset" id="setTrackerReset" type="button">
+                Reset
+              </button>
             </div>
           </div>
 
@@ -722,6 +885,15 @@
     </div>
 
   </main>
+
+  <div class="timer-modal" id="timerModal" hidden>
+    <div class="timer-modal-card" role="dialog" aria-modal="true" aria-labelledby="timerModalTitle">
+      <h2 id="timerModalTitle">Rest timer</h2>
+      <div class="timer-modal-status" id="timerModalStatus">Rest before set 2</div>
+      <div class="timer-modal-time" id="timerModalTime" aria-live="polite">1:00</div>
+      <div class="timer-modal-status">The next set will start automatically.</div>
+    </div>
+  </div>
 
   <script>
     const STORAGE_KEY = "muscleHealthPlan";
@@ -854,6 +1026,22 @@
 
     const DAY_IDS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
+    function getDateKey(date = new Date()) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function getWeekStartKey(date = new Date()) {
+      const monday = new Date(date);
+      const daysSinceMonday = (monday.getDay() + 6) % 7;
+
+      monday.setHours(0, 0, 0, 0);
+      monday.setDate(monday.getDate() - daysSinceMonday);
+      return getDateKey(monday);
+    }
+
     function getTodayDayId() {
       return DAY_IDS[new Date().getDay()];
     }
@@ -861,20 +1049,35 @@
     let state = {
       selectedDay: getTodayDayId(),
       completedDays: {},
-      completedExercises: {}
+      completedExercises: {},
+      weekStart: getWeekStartKey()
     };
 
     let todos = [];
+    let todosWeekStart = getWeekStartKey();
     let proteinEntries = { whey: 1 };
+    let proteinDay = getDateKey();
+    const setTracker = {
+      currentSet: 1,
+      remaining: 60,
+      timerId: null,
+      completed: false
+    };
 
     function loadState() {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
 
         if (saved) {
+          const parsed = JSON.parse(saved);
+          const isCurrentWeek = parsed.weekStart === getWeekStartKey();
+
           state = {
             ...state,
-            ...JSON.parse(saved),
+            ...parsed,
+            completedDays: isCurrentWeek ? (parsed.completedDays || {}) : {},
+            completedExercises: isCurrentWeek ? (parsed.completedExercises || {}) : {},
+            weekStart: getWeekStartKey(),
             selectedDay: getTodayDayId()
           };
         }
@@ -893,7 +1096,18 @@
 
         if (saved) {
           const parsed = JSON.parse(saved);
-          todos = Array.isArray(parsed) ? parsed : [];
+
+          if (Array.isArray(parsed)) {
+            todos = parsed;
+          } else {
+            todos = Array.isArray(parsed.items) ? parsed.items : [];
+            todosWeekStart = parsed.weekStart || getWeekStartKey();
+          }
+
+          if (todosWeekStart !== getWeekStartKey()) {
+            todos = todos.map(todo => ({ ...todo, completed: false }));
+            todosWeekStart = getWeekStartKey();
+          }
         }
       } catch (error) {
         console.warn("Could not load saved to-dos.", error);
@@ -901,7 +1115,10 @@
     }
 
     function saveTodos() {
-      localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
+      localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify({
+        weekStart: todosWeekStart,
+        items: todos
+      }));
     }
 
     function loadProteinEntries() {
@@ -910,9 +1127,12 @@
 
         if (saved) {
           const parsed = JSON.parse(saved);
-          proteinEntries = parsed && typeof parsed === "object"
-            ? { ...proteinEntries, ...parsed }
-            : proteinEntries;
+          const isToday = parsed && parsed.day === getDateKey();
+
+          proteinEntries = isToday && parsed.entries && typeof parsed.entries === "object"
+            ? { ...proteinEntries, ...parsed.entries }
+            : { whey: 1 };
+          proteinDay = isToday ? parsed.day : getDateKey();
 
           if (proteinEntries.whey === true) proteinEntries.whey = 1;
         }
@@ -922,7 +1142,62 @@
     }
 
     function saveProteinEntries() {
-      localStorage.setItem(PROTEIN_STORAGE_KEY, JSON.stringify(proteinEntries));
+      localStorage.setItem(PROTEIN_STORAGE_KEY, JSON.stringify({
+        day: proteinDay,
+        entries: proteinEntries
+      }));
+    }
+
+    function saveCurrentPeriods() {
+      state.weekStart = getWeekStartKey();
+      todosWeekStart = getWeekStartKey();
+      saveState();
+      saveTodos();
+      saveProteinEntries();
+    }
+
+    function resetForCurrentPeriods() {
+      const currentWeek = getWeekStartKey();
+      const currentDay = getDateKey();
+      let changed = false;
+
+      if (state.weekStart !== currentWeek) {
+        state.completedDays = {};
+        state.completedExercises = {};
+        state.weekStart = currentWeek;
+        changed = true;
+      }
+
+      if (todosWeekStart !== currentWeek) {
+        todos = todos.map(todo => ({ ...todo, completed: false }));
+        todosWeekStart = currentWeek;
+        changed = true;
+      }
+
+      if (proteinDay !== currentDay) {
+        proteinEntries = { whey: 1 };
+        proteinDay = currentDay;
+        changed = true;
+      }
+
+      if (changed) {
+        saveCurrentPeriods();
+      }
+    }
+
+    function schedulePeriodResetCheck() {
+      const now = new Date();
+      const nextMidnight = new Date(now);
+      nextMidnight.setHours(24, 0, 0, 50);
+
+      window.setTimeout(() => {
+        resetForCurrentPeriods();
+        renderWeek();
+        renderWorkout();
+        renderTodos();
+        renderProteinCalculator();
+        schedulePeriodResetCheck();
+      }, Math.max(1000, nextMidnight.getTime() - now.getTime()));
     }
 
     function getProteinTotal() {
@@ -960,6 +1235,9 @@
 
         const entry = document.createElement("div");
         entry.className = `protein-entry${selected ? "" : " disabled"}`;
+        entry.tabIndex = 0;
+        entry.setAttribute("role", "button");
+        entry.setAttribute("aria-label", `${selected ? "Remove" : "Add"} ${food.label}`);
 
         const enabled = document.createElement("input");
         enabled.className = "protein-enable";
@@ -977,6 +1255,17 @@
 
           saveProteinEntries();
           renderProteinCalculator();
+        });
+
+        entry.addEventListener("click", event => {
+          if (event.target.closest("input")) return;
+          enabled.click();
+        });
+
+        entry.addEventListener("keydown", event => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          enabled.click();
         });
 
         const name = document.createElement("div");
@@ -1083,6 +1372,88 @@
         form.reset();
         input.focus();
       });
+    }
+
+    function renderSetTracker() {
+      const status = document.getElementById("setTrackerStatus");
+      const timer = document.getElementById("setTrackerTimer");
+      const completeButton = document.getElementById("setTrackerComplete");
+      const timerModal = document.getElementById("timerModal");
+      const timerModalStatus = document.getElementById("timerModalStatus");
+      const timerModalTime = document.getElementById("timerModalTime");
+      const completedSets = setTracker.completed ? 3 : setTracker.currentSet - 1;
+
+      document.querySelectorAll("[data-set-circle]").forEach(circle => {
+        const setNumber = Number(circle.dataset.setCircle);
+        circle.classList.toggle("completed", setNumber <= completedSets);
+        circle.classList.toggle(
+          "active",
+          !setTracker.completed && setNumber === setTracker.currentSet
+        );
+      });
+
+      if (setTracker.completed) {
+        status.textContent = "All 3 sets complete";
+        timer.textContent = "Done";
+        completeButton.disabled = true;
+        return;
+      }
+
+      status.textContent = setTracker.timerId
+        ? `Set ${setTracker.currentSet - 1} complete · rest before set ${setTracker.currentSet}`
+        : `Set ${setTracker.currentSet} of 3`;
+      timer.textContent = setTracker.timerId
+        ? `${Math.floor(setTracker.remaining / 60)}:${String(setTracker.remaining % 60).padStart(2, "0")}`
+        : "Ready";
+      timerModal.hidden = !setTracker.timerId;
+      if (setTracker.timerId) {
+        timerModalStatus.textContent = `Rest before set ${setTracker.currentSet}`;
+        timerModalTime.textContent = timer.textContent;
+      }
+      completeButton.disabled = !!setTracker.timerId;
+      completeButton.textContent = `Complete set ${setTracker.currentSet}`;
+    }
+
+    function startSetRest() {
+      setTracker.remaining = 60;
+      setTracker.timerId = window.setInterval(() => {
+        setTracker.remaining -= 1;
+
+        if (setTracker.remaining <= 0) {
+          window.clearInterval(setTracker.timerId);
+          setTracker.timerId = null;
+          setTracker.currentSet += 1;
+          setTracker.remaining = 60;
+        }
+
+        renderSetTracker();
+      }, 1000);
+      renderSetTracker();
+    }
+
+    function setupSetTracker() {
+      document.getElementById("setTrackerComplete").addEventListener("click", () => {
+        if (setTracker.timerId || setTracker.completed) return;
+
+        if (setTracker.currentSet === 3) {
+          setTracker.completed = true;
+          renderSetTracker();
+          return;
+        }
+
+        startSetRest();
+      });
+
+      document.getElementById("setTrackerReset").addEventListener("click", () => {
+        if (setTracker.timerId) window.clearInterval(setTracker.timerId);
+        setTracker.currentSet = 1;
+        setTracker.remaining = 60;
+        setTracker.timerId = null;
+        setTracker.completed = false;
+        renderSetTracker();
+      });
+
+      renderSetTracker();
     }
 
     function getDayById(id) {
@@ -1215,6 +1586,8 @@
     loadState();
     loadTodos();
     loadProteinEntries();
+    resetForCurrentPeriods();
+    schedulePeriodResetCheck();
 
     /*
       When all exercises for a strength/run day are checked,
@@ -1232,6 +1605,7 @@
 
     setupDayCompletion();
     setupTodoList();
+    setupSetTracker();
     renderWeek();
     renderWorkout();
     renderTodos();
